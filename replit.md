@@ -1,10 +1,11 @@
-# [Project name]
+# SubsTrack
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A full-stack SaaS subscription optimizer that helps users track subscriptions, free trials, renewal dates, and recurring expenses to save money and avoid surprise charges.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `pnpm --filter @workspace/api-server run dev` — run the API server (port 8080)
+- `pnpm --filter @workspace/substrack run dev` — run the frontend (port 19318)
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
@@ -14,32 +15,49 @@ _Replace the heading above with the project's name, and this line with one sente
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
+- Frontend: React + Vite + Tailwind CSS + shadcn/ui + Recharts + Framer Motion + Wouter
 - API: Express 5
 - DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
+- Validation: Zod, drizzle-zod
 - API codegen: Orval (from OpenAPI spec)
 - Build: esbuild (CJS bundle)
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `lib/api-spec/openapi.yaml` — OpenAPI contract (source of truth)
+- `lib/api-client-react/src/generated/` — generated React Query hooks (do not edit)
+- `lib/api-zod/src/generated/` — generated Zod schemas (do not edit)
+- `lib/db/src/schema/subscriptions.ts` — Drizzle DB schema
+- `artifacts/api-server/src/routes/subscriptions.ts` — all API routes
+- `artifacts/substrack/src/` — React frontend
+  - `pages/` — Landing, Dashboard, Subscriptions, Trials, Analytics, Settings
+  - `components/subscription-form-modal.tsx` — Add/Edit modal
+  - `lib/constants.ts` — Form schema + category/currency/billing cycle constants
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Contract-first: OpenAPI spec gates codegen which gates the frontend; spec renamed body schemas to `SubscriptionCreate`/`SubscriptionUpdate` to avoid Orval naming conflicts.
+- All subscription math (monthly normalization) is done server-side in route handlers to keep frontend purely presentational.
+- `zod` (not `zod/v4`) used in api-server because esbuild can't resolve the `/v4` subpath export.
+- Seed data seeded directly via `executeSql` at build time (13 realistic subscriptions).
+- No authentication in MVP — all subscriptions are global; auth can be layered on later.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
-
-## User preferences
-
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- **Landing page**: Hero, features, pricing preview, CTA
+- **Dashboard**: Monthly spend, active count, trials ending soon, upcoming renewals, savings banner
+- **Subscriptions**: Full list with search/filter by status and category, add/edit/delete
+- **Trials**: Active, ending-soon, expired trials with countdown progress bars and urgency coloring
+- **Analytics**: Spend by category (pie chart), spending over time (bar chart), top subscriptions
+- **Settings**: Theme (light/dark/system), notifications, currency, export, delete account
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- Run codegen before touching generated files: `pnpm --filter @workspace/api-spec run codegen`
+- Never import `zod/v4` in api-server — use plain `zod` (esbuild limitation)
+- Do not add leaf workspace packages to root `tsconfig.json` references
 
 ## Pointers
 
-- See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details
+- See `pnpm-workspace` skill for workspace structure and TypeScript setup
+- See `react-vite` skill for frontend conventions

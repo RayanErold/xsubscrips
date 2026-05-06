@@ -1,0 +1,137 @@
+Use this prompt for Lovable:
+
+```text
+Build a full-stack SaaS web app called SubsTrack.
+
+Goal:
+A modern subscription optimizer that helps users track subscriptions, monthly recurring expenses, free trials, renewal dates, and reminders so they can save money and avoid surprise charges.
+
+Design style:
+Use a clean modern SaaS UI inspired by fintech dashboards.
+White/light background, purple accent color, rounded cards, soft shadows, sidebar navigation, responsive layout, clean typography.
+
+Tech:
+Use React + TypeScript + TailwindCSS.
+Use Supabase for authentication and database.
+Use protected routes for logged-in users.
+
+Pages to build:
+1. Landing Page
+- Hero section: “Manage subscriptions. Save money. Stress less.”
+- CTA: Get Started Free
+- Feature cards: Track Everything, Trial Reminders, Analytics, Add Subscriptions
+- Pricing preview section
+
+2. Auth Pages
+- Sign up
+- Log in
+- Forgot password
+
+3. Dashboard
+- Sidebar: Overview, Subscriptions, Trials, Analytics, Settings
+- Summary cards:
+  - Monthly recurring spend
+  - Active subscriptions
+  - Trials ending soon
+  - Upcoming renewals
+- List of upcoming subscriptions
+- Button: Add New Subscription
+
+4. Subscriptions Page
+- Table/list of all subscriptions
+- Fields:
+  - name
+  - category
+  - price
+  - billing cycle
+  - next billing date
+  - status
+- Actions:
+  - add
+  - edit
+  - delete
+
+5. Add Subscription Modal/Form
+Fields:
+- Subscription name
+- Category
+- Amount
+- Currency
+- Billing cycle: monthly, yearly, weekly
+- Start date
+- Next billing date
+- Has free trial toggle
+- Trial end date
+- Notes
+- Reminder preference
+
+6. Trials Page
+- Cards:
+  - active trials
+  - ending soon
+  - expired trials
+  - money at risk
+- Trial list with:
+  - service name
+  - trial end date
+  - days left
+  - price after trial
+  - progress bar
+  - cancel/manage button
+- Use colors:
+  - red for 0–3 days left
+  - orange for 4–7 days
+  - green for 8+ days
+
+7. Analytics Page
+- Total monthly spend
+- Spend by category
+- Spending over time
+- Top subscriptions
+- Unused subscriptions placeholder
+Use simple charts.
+
+8. Settings Page
+- Notification preferences
+- Currency
+- Appearance: light/dark/system
+- Account settings
+- Export data
+- Delete account
+
+Database tables:
+users
+subscriptions:
+- id
+- user_id
+- name
+- category
+- price
+- currency
+- billing_cycle
+- start_date
+- next_billing_date
+- has_trial
+- trial_end_date
+- reminder_days_before
+- notes
+- status
+- created_at
+
+Core logic:
+- Calculate monthly recurring spend
+- Calculate days until trial ends
+- Calculate upcoming renewals
+- Mark trial as active, ending soon, or expired
+- Filter subscriptions by category and status
+
+MVP first:
+Focus on manual subscription tracking, dashboard, trials countdown, basic analytics, and clean UI.
+Do not build bank integration yet.
+Do not build AI features yet.
+Do not overcomplicate.
+
+Make the app production-ready, responsive, and easy to expand later.
+```
+
+Use this as your **main build prompt**.

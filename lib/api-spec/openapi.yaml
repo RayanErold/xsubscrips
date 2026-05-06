@@ -3,20 +3,26 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: SubsTrack API specification
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: subscriptions
+    description: Subscription management
+  - name: dashboard
+    description: Dashboard summaries
+  - name: analytics
+    description: Spending analytics
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +30,179 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /subscriptions:
+    get:
+      operationId: listSubscriptions
+      tags: [subscriptions]
+      summary: List all subscriptions
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, paused, cancelled]
+        - name: category
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of subscriptions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Subscription"
+    post:
+      operationId: createSubscription
+      tags: [subscriptions]
+      summary: Create a subscription
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubscriptionCreate"
+      responses:
+        "201":
+          description: Created subscription
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Subscription"
+
+  /subscriptions/{id}:
+    get:
+      operationId: getSubscription
+      tags: [subscriptions]
+      summary: Get a subscription
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Subscription
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Subscription"
+        "404":
+          description: Not found
+    put:
+      operationId: updateSubscription
+      tags: [subscriptions]
+      summary: Update a subscription
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubscriptionUpdate"
+      responses:
+        "200":
+          description: Updated subscription
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Subscription"
+    delete:
+      operationId: deleteSubscription
+      tags: [subscriptions]
+      summary: Delete a subscription
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Dashboard summary stats
+      responses:
+        "200":
+          description: Summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
+  /dashboard/upcoming:
+    get:
+      operationId: getUpcomingRenewals
+      tags: [dashboard]
+      summary: Subscriptions renewing in the next 30 days
+      responses:
+        "200":
+          description: Upcoming renewals
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Subscription"
+
+  /analytics/spend-by-category:
+    get:
+      operationId: getSpendByCategory
+      tags: [analytics]
+      summary: Monthly spend grouped by category
+      responses:
+        "200":
+          description: Category spend breakdown
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CategorySpend"
+
+  /analytics/spend-over-time:
+    get:
+      operationId: getSpendOverTime
+      tags: [analytics]
+      summary: Monthly spend over the past 6 months
+      responses:
+        "200":
+          description: Spend over time
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MonthlySpend"
+
+  /analytics/top-subscriptions:
+    get:
+      operationId: getTopSubscriptions
+      tags: [analytics]
+      summary: Top subscriptions by monthly cost
+      responses:
+        "200":
+          description: Top subscriptions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Subscription"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +213,185 @@ components:
       required:
         - status
 
+    Subscription:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        category:
+          type: string
+        price:
+          type: number
+        currency:
+          type: string
+        billingCycle:
+          type: string
+          enum: [monthly, yearly, weekly]
+        startDate:
+          type: string
+          format: date
+        nextBillingDate:
+          type: string
+          format: date
+        hasTrial:
+          type: boolean
+        trialEndDate:
+          type: string
+          format: date
+          nullable: true
+        reminderDaysBefore:
+          type: integer
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [active, paused, cancelled]
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - category
+        - price
+        - currency
+        - billingCycle
+        - startDate
+        - nextBillingDate
+        - hasTrial
+        - status
+        - createdAt
+
+    SubscriptionCreate:
+      type: object
+      properties:
+        name:
+          type: string
+        category:
+          type: string
+        price:
+          type: number
+        currency:
+          type: string
+          default: USD
+        billingCycle:
+          type: string
+          enum: [monthly, yearly, weekly]
+        startDate:
+          type: string
+          format: date
+        nextBillingDate:
+          type: string
+          format: date
+        hasTrial:
+          type: boolean
+          default: false
+        trialEndDate:
+          type: string
+          format: date
+          nullable: true
+        reminderDaysBefore:
+          type: integer
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [active, paused, cancelled]
+          default: active
+      required:
+        - name
+        - category
+        - price
+        - billingCycle
+        - startDate
+        - nextBillingDate
+
+    SubscriptionUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        category:
+          type: string
+        price:
+          type: number
+        currency:
+          type: string
+        billingCycle:
+          type: string
+          enum: [monthly, yearly, weekly]
+        startDate:
+          type: string
+          format: date
+        nextBillingDate:
+          type: string
+          format: date
+        hasTrial:
+          type: boolean
+        trialEndDate:
+          type: string
+          format: date
+          nullable: true
+        reminderDaysBefore:
+          type: integer
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [active, paused, cancelled]
+
+    DashboardSummary:
+      type: object
+      properties:
+        monthlySpend:
+          type: number
+        activeCount:
+          type: integer
+        trialsEndingSoon:
+          type: integer
+        upcomingRenewals:
+          type: integer
+        yearlySpend:
+          type: number
+        savingsOpportunity:
+          type: number
+      required:
+        - monthlySpend
+        - activeCount
+        - trialsEndingSoon
+        - upcomingRenewals
+        - yearlySpend
+        - savingsOpportunity
+
+    CategorySpend:
+      type: object
+      properties:
+        category:
+          type: string
+        monthlyAmount:
+          type: number
+        count:
+          type: integer
+      required:
+        - category
+        - monthlyAmount
+        - count
+
+    MonthlySpend:
+      type: object
+      properties:
+        month:
+          type: string
+        amount:
+          type: number
+      required:
+        - month
+        - amount
