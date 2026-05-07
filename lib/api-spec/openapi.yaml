@@ -203,6 +203,21 @@ paths:
                 items:
                   $ref: "#/components/schemas/Subscription"
 
+  /notifications:
+    get:
+      operationId: getNotifications
+      tags: [dashboard]
+      summary: In-app notification alerts for trials and renewals
+      responses:
+        "200":
+          description: Notification alerts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/NotificationAlert"
+
 components:
   schemas:
     HealthStatus:
@@ -395,3 +410,34 @@ components:
       required:
         - month
         - amount
+
+    NotificationAlert:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum: [trial, renewal]
+        title:
+          type: string
+        message:
+          type: string
+        daysLeft:
+          type: integer
+        subscriptionId:
+          type: integer
+        subscriptionName:
+          type: string
+        severity:
+          type: string
+          enum: [info, warning, urgent]
+      required:
+        - id
+        - type
+        - title
+        - message
+        - daysLeft
+        - subscriptionId
+        - subscriptionName
+        - severity

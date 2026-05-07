@@ -130,6 +130,34 @@ export interface MonthlySpend {
   amount: number;
 }
 
+export type NotificationAlertType =
+  (typeof NotificationAlertType)[keyof typeof NotificationAlertType];
+
+export const NotificationAlertType = {
+  trial: "trial",
+  renewal: "renewal",
+} as const;
+
+export type NotificationAlertSeverity =
+  (typeof NotificationAlertSeverity)[keyof typeof NotificationAlertSeverity];
+
+export const NotificationAlertSeverity = {
+  info: "info",
+  warning: "warning",
+  urgent: "urgent",
+} as const;
+
+export interface NotificationAlert {
+  id: string;
+  type: NotificationAlertType;
+  title: string;
+  message: string;
+  daysLeft: number;
+  subscriptionId: number;
+  subscriptionName: string;
+  severity: NotificationAlertSeverity;
+}
+
 export type ListSubscriptionsParams = {
   status?: ListSubscriptionsStatus;
   category?: string;

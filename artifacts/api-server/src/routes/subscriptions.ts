@@ -316,6 +316,148 @@ router.get("/analytics/spend-over-time", async (req, res) => {
   res.json(result);
 });
 
+// GET /notifications
+router.get("/notifications", async (req, res) => {
+  const today = new Date().toISOString().split("T")[0];
+  const rows = await db.select().from(subscriptionsTable);
+
+  const alerts: {
+    id: string;
+    type: "trial" | "renewal";
+    title: string;
+    message: string;
+    daysLeft: number;
+    subscriptionId: number;
+    subscriptionName: string;
+    severity: "info" | "warning" | "urgent";
+  }[] = [];
+
+  for (const row of rows) {
+    if (row.status === "cancelled") continue;
+
+    // Trial alerts
+    if (row.hasTrial && row.trialEndDate) {
+      const daysLeft = Math.ceil(
+        (new Date(row.trialEndDate).getTime() - new Date(today).getTime()) /
+          (1000 * 60 * 60 * 24),
+      );
+      if (daysLeft >= -1 && daysLeft <= 14) {
+        const severity =
+          daysLeft <= 1 ? "urgent" : daysLeft <= 7 ? "warning" : "info";
+        alerts.push({
+          id: `trial-${row.id}`,
+          type: "trial",
+          title: `Trial ${daysLeft < 0 ? "expired" : "ending soon"}`,
+          message:
+            daysLeft < 0
+              ? `${row.name} trial expired — you may now be charged.`
+              : daysLeft === 0
+                ? `${row.name} trial ends today!`
+                : `${row.name} trial ends in ${daysLeft} day${daysLeft !== 1 ? "s" : ""}.`,
+          daysLeft,
+          subscriptionId: row.id,
+          subscriptionName: row.name,
+          severity,
+        });
+      }
+    }
+
+    // Renewal alerts — use reminderDaysBefore or default 7 days
+    if (row.status === "active") {
+      const reminderWindow = row.reminderDaysBefore ?? 7;
+      const daysLeft = Math.ceil(
+        (new Date(row.nextBillingDate).getTime() - new Date(today).getTime()) /
+          (1000 * 60 * 60 * 24),
+      );
+      if (daysLeft >= 0 && daysLeft <= reminderWindow) {
+        const severity =
+          daysLeft <= 1 ? "urgent" : daysLeft <= 3 ? "warning" : "info";
+        alerts.push({
+          id: `renewal-${row.id}`,
+          type: "renewal",
+          title: "Renewal upcoming",
+          message:
+            daysLeft === 0
+              ? `${row.name} renews today ($${parseFloat(row.price as unknown as string).toFixed(2)}).`
+              : `${row.name} renews in ${daysLeft} day${daysLeft !== 1 ? "s" : ""} ($${parseFloat(row.price as unknown as string).toFixed(2)}).`,
+          daysLeft,
+          subscriptionId: row.id,
+          subscriptionName: row.name,
+          severity,
+        });
+      }
+    }
+  }
+
+  // Sort: urgent first, then by daysLeft asc
+  alerts.sort((a, b) => {
+    const severityOrder = { urgent: 0, warning: 1, info: 2 };
+    if (severityOrder[a.severity] !== severityOrder[b.severity]) {
+      return severityOrder[a.severity] - severityOrder[b.severity];
+    }
+    return a.daysLeft - b.daysLeft;
+  });
+
+  res.json(alerts);
+});
+
+// GET /subscriptions/export (CSV)
+router.get("/subscriptions/export", async (req, res) => {
+  const rows = await db
+    .select()
+    .from(subscriptionsTable)
+    .orderBy(subscriptionsTable.nextBillingDate);
+
+  const headers = [
+    "Name",
+    "Category",
+    "Price",
+    "Currency",
+    "Billing Cycle",
+    "Status",
+    "Start Date",
+    "Next Billing Date",
+    "Has Trial",
+    "Trial End Date",
+    "Reminder Days Before",
+    "Notes",
+  ];
+
+  const escape = (v: string | null | undefined) => {
+    if (v === null || v === undefined) return "";
+    const str = String(v);
+    if (str.includes(",") || str.includes('"') || str.includes("\n")) {
+      return `"${str.replace(/"/g, '""')}"`;
+    }
+    return str;
+  };
+
+  const csvRows = rows.map((row) =>
+    [
+      escape(row.name),
+      escape(row.category),
+      escape(row.price as unknown as string),
+      escape(row.currency),
+      escape(row.billingCycle),
+      escape(row.status),
+      escape(row.startDate),
+      escape(row.nextBillingDate),
+      row.hasTrial ? "Yes" : "No",
+      escape(row.trialEndDate),
+      escape(row.reminderDaysBefore?.toString()),
+      escape(row.notes),
+    ].join(","),
+  );
+
+  const csv = [headers.join(","), ...csvRows].join("\n");
+  res.setHeader("Content-Type", "text/csv");
+  res.setHeader(
+    "Content-Disposition",
+    `attachment; filename="substrack-export-${new Date().toISOString().split("T")[0]}.csv"`,
+  );
+  res.send(csv);
+});
+
 // GET /analytics/top-subscriptions
 router.get("/analytics/top-subscriptions", async (req, res) => {
   const rows = await db

@@ -214,3 +214,18 @@ export const GetTopSubscriptionsResponseItem = zod.object({
 export const GetTopSubscriptionsResponse = zod.array(
   GetTopSubscriptionsResponseItem,
 );
+
+/**
+ * @summary In-app notification alerts for trials and renewals
+ */
+export const GetNotificationsResponseItem = zod.object({
+  id: zod.string(),
+  type: zod.enum(["trial", "renewal"]),
+  title: zod.string(),
+  message: zod.string(),
+  daysLeft: zod.number(),
+  subscriptionId: zod.number(),
+  subscriptionName: zod.string(),
+  severity: zod.enum(["info", "warning", "urgent"]),
+});
+export const GetNotificationsResponse = zod.array(GetNotificationsResponseItem);

@@ -27,7 +27,13 @@ export default function Settings() {
   const [currency, setCurrency] = useState("USD");
 
   const handleExport = () => {
-    toast.success("Export feature coming soon");
+    const link = document.createElement("a");
+    link.href = "/api/subscriptions/export";
+    link.download = "";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success("Export started — check your downloads");
   };
 
   const handleDeleteAccount = () => {

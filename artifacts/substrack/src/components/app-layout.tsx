@@ -1,7 +1,8 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "wouter";
-import { LayoutDashboard, List, Clock, PieChart, Settings, Plus, X } from "lucide-react";
+import { LayoutDashboard, List, Clock, PieChart, Settings } from "lucide-react";
 import { Button } from "./ui/button";
+import { NotificationBell } from "./notification-bell";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -17,11 +18,12 @@ export function AppLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-background flex flex-col md:flex-row">
       <aside className="w-full md:w-64 border-r border-border bg-sidebar shrink-0 md:h-screen sticky top-0 flex flex-col">
-        <div className="p-6 pb-4">
+        <div className="p-5 pb-4 flex items-center justify-between">
           <Link href="/dashboard" className="flex items-center gap-2 text-primary font-bold text-xl tracking-tight cursor-pointer">
             <PieChart className="w-6 h-6" />
             SubsTrack
           </Link>
+          <NotificationBell />
         </div>
         <nav className="flex-1 px-4 space-y-1 overflow-y-auto hidden md:block">
           {navItems.map((item) => {
@@ -42,7 +44,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
         </nav>
         {/* Mobile Nav */}
         <div className="md:hidden flex overflow-x-auto px-4 py-2 border-b border-border gap-2 scrollbar-none">
-           {navItems.map((item) => {
+          {navItems.map((item) => {
             const isActive = location === item.href || location.startsWith(item.href + "/");
             const Icon = item.icon;
             return (
