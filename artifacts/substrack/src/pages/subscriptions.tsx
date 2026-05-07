@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Search, Pencil, Trash2, Filter, CreditCard } from "lucide-react";
+import { Plus, Search, Pencil, Trash2, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { AppLayout } from "@/components/app-layout";
 import { SubscriptionFormModal } from "@/components/subscription-form-modal";
+import { ServiceIcon } from "@/components/service-icon";
 import {
   useListSubscriptions,
   useDeleteSubscription,
@@ -137,6 +138,7 @@ export default function Subscriptions() {
             {[1, 2, 3, 4, 5].map((i) => (
               <Card key={i}>
                 <CardContent className="p-4 flex items-center gap-4">
+                  <Skeleton className="w-10 h-10 rounded-xl shrink-0" />
                   <div className="flex-1 space-y-2">
                     <Skeleton className="h-4 w-40" />
                     <Skeleton className="h-3 w-24" />
@@ -182,9 +184,12 @@ export default function Subscriptions() {
                   <Card className="hover:shadow-sm transition-shadow group">
                     <CardContent className="p-4">
                       <div className="flex items-center gap-4">
+                        {/* Service icon */}
+                        <ServiceIcon name={sub.name} size="md" />
+
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-medium text-foreground">{sub.name}</span>
+                            <span className="font-semibold text-foreground">{sub.name}</span>
                             <Badge variant="outline" className="text-xs">{sub.category}</Badge>
                             <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${STATUS_COLORS[sub.status as keyof typeof STATUS_COLORS]}`}>
                               {sub.status}
@@ -193,10 +198,11 @@ export default function Subscriptions() {
                               <Badge variant="secondary" className="text-xs">Trial</Badge>
                             )}
                           </div>
-                          <p className="text-sm text-muted-foreground mt-1">
+                          <p className="text-sm text-muted-foreground mt-0.5">
                             Renews {format(parseISO(sub.nextBillingDate), "MMM d, yyyy")} · {sub.billingCycle}
                           </p>
                         </div>
+
                         <div className="text-right shrink-0">
                           <p className="font-semibold text-foreground">
                             ${sub.price.toFixed(2)}
@@ -205,6 +211,7 @@ export default function Subscriptions() {
                             ${toMonthly(sub.price, sub.billingCycle).toFixed(2)}/mo
                           </p>
                         </div>
+
                         <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
                           <Button
                             variant="ghost"

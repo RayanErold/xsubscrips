@@ -12,6 +12,29 @@ const navItems = [
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
+function SubsTrackLogo() {
+  return (
+    <div className="flex items-center gap-2.5">
+      {/* Product icon mark */}
+      <div
+        className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 shadow-sm"
+        style={{
+          background: "linear-gradient(135deg, hsl(262, 83%, 62%) 0%, hsl(280, 75%, 52%) 100%)",
+        }}
+      >
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="3" width="5" height="2" rx="1" fill="white" fillOpacity="0.9" />
+          <rect x="2" y="7" width="8" height="2" rx="1" fill="white" fillOpacity="0.9" />
+          <rect x="2" y="11" width="6" height="2" rx="1" fill="white" fillOpacity="0.9" />
+          <circle cx="12" cy="12" r="2.5" fill="white" fillOpacity="0.35" />
+          <path d="M11 12 L12 13 L13.5 11" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </div>
+      <span className="font-bold text-lg tracking-tight text-foreground">SubsTrack</span>
+    </div>
+  );
+}
+
 export function AppLayout({ children }: { children: ReactNode }) {
   const [location] = useLocation();
 
@@ -19,9 +42,8 @@ export function AppLayout({ children }: { children: ReactNode }) {
     <div className="min-h-screen bg-background flex flex-col md:flex-row">
       <aside className="w-full md:w-64 border-r border-border bg-sidebar shrink-0 md:h-screen sticky top-0 flex flex-col">
         <div className="p-5 pb-4 flex items-center justify-between">
-          <Link href="/dashboard" className="flex items-center gap-2 text-primary font-bold text-xl tracking-tight cursor-pointer">
-            <PieChart className="w-6 h-6" />
-            SubsTrack
+          <Link href="/dashboard" className="cursor-pointer">
+            <SubsTrackLogo />
           </Link>
           <NotificationBell />
         </div>

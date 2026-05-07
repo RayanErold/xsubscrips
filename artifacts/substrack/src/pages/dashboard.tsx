@@ -2,11 +2,12 @@ import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { Plus, DollarSign, CreditCard, Clock, Calendar, ArrowRight, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AppLayout } from "@/components/app-layout";
 import { SubscriptionFormModal } from "@/components/subscription-form-modal";
+import { ServiceIcon } from "@/components/service-icon";
 import {
   useGetDashboardSummary,
   useGetUpcomingRenewals,
@@ -162,8 +163,9 @@ export default function Dashboard() {
             <div className="space-y-3">
               {[1, 2, 3].map((i) => (
                 <Card key={i}>
-                  <CardContent className="p-4 flex items-center justify-between">
-                    <div className="space-y-2">
+                  <CardContent className="p-4 flex items-center gap-4">
+                    <Skeleton className="w-10 h-10 rounded-xl shrink-0" />
+                    <div className="flex-1 space-y-2">
                       <Skeleton className="h-4 w-32" />
                       <Skeleton className="h-3 w-20" />
                     </div>
@@ -173,7 +175,7 @@ export default function Dashboard() {
               ))}
             </div>
           ) : upcoming && upcoming.length > 0 ? (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {upcoming.map((sub, i) => {
                 const daysLeft = differenceInDays(parseISO(sub.nextBillingDate), new Date());
                 const isUrgent = daysLeft <= 3;
@@ -185,10 +187,11 @@ export default function Dashboard() {
                     transition={{ delay: i * 0.05 }}
                   >
                     <Card className="hover:shadow-sm transition-shadow">
-                      <CardContent className="p-4 flex items-center justify-between">
-                        <div>
+                      <CardContent className="p-4 flex items-center gap-4">
+                        <ServiceIcon name={sub.name} size="md" />
+                        <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            <p className="font-medium text-foreground">{sub.name}</p>
+                            <p className="font-semibold text-foreground">{sub.name}</p>
                             <Badge variant="outline" className="text-xs">{sub.category}</Badge>
                           </div>
                           <p className="text-sm text-muted-foreground mt-0.5">
@@ -199,7 +202,7 @@ export default function Dashboard() {
                             </span>
                           </p>
                         </div>
-                        <div className="text-right">
+                        <div className="text-right shrink-0">
                           <p className="font-semibold text-foreground">${sub.price.toFixed(2)}</p>
                           <p className="text-xs text-muted-foreground">{sub.billingCycle}</p>
                         </div>

@@ -1,11 +1,11 @@
 import { motion } from "framer-motion";
 import { Clock, AlertTriangle, CheckCircle, XCircle, DollarSign } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AppLayout } from "@/components/app-layout";
+import { ServiceIcon } from "@/components/service-icon";
 import { useListSubscriptions } from "@workspace/api-client-react";
 import { format, parseISO, differenceInDays } from "date-fns";
 
@@ -14,6 +14,7 @@ type Trial = {
   name: string;
   category: string;
   trialEndDate: string;
+  startDate: string;
   price: number;
   currency: string;
   billingCycle: string;
@@ -31,17 +32,17 @@ function getTrialStatus(daysLeft: number): "active" | "ending-soon" | "expired" 
   return "active";
 }
 
-function urgencyColor(daysLeft: number) {
+function urgencyBadgeStyle(daysLeft: number) {
   if (daysLeft < 0) return "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400";
   if (daysLeft <= 3) return "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400";
   if (daysLeft <= 7) return "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400";
   return "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400";
 }
 
-function urgencyProgressColor(daysLeft: number) {
-  if (daysLeft < 0) return "bg-gray-400";
+function urgencyBarColor(daysLeft: number) {
+  if (daysLeft < 0) return "bg-gray-300 dark:bg-gray-600";
   if (daysLeft <= 3) return "bg-red-500";
-  if (daysLeft <= 7) return "bg-orange-500";
+  if (daysLeft <= 7) return "bg-orange-400";
   return "bg-green-500";
 }
 
@@ -49,6 +50,12 @@ function toMonthly(price: number, cycle: string) {
   if (cycle === "yearly") return price / 12;
   if (cycle === "weekly") return price * 4.33;
   return price;
+}
+
+function cycleLabel(cycle: string) {
+  if (cycle === "monthly") return "mo";
+  if (cycle === "yearly") return "yr";
+  return "wk";
 }
 
 export default function Trials() {
@@ -61,6 +68,7 @@ export default function Trials() {
     name: s.name,
     category: s.category,
     trialEndDate: s.trialEndDate!,
+    startDate: s.startDate,
     price: s.price,
     currency: s.currency,
     billingCycle: s.billingCycle,
@@ -124,7 +132,18 @@ export default function Trials() {
         {/* Trial List */}
         {isLoading ? (
           <div className="space-y-4">
-            {[1, 2, 3].map((i) => <Card key={i}><CardContent className="p-6"><Skeleton className="h-20 w-full" /></CardContent></Card>)}
+            {[1, 2, 3].map((i) => (
+              <Card key={i}>
+                <CardContent className="p-5 flex gap-4">
+                  <Skeleton className="w-12 h-12 rounded-2xl shrink-0" />
+                  <div className="flex-1 space-y-3">
+                    <Skeleton className="h-4 w-40" />
+                    <Skeleton className="h-3 w-24" />
+                    <Skeleton className="h-2 w-full" />
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         ) : allTrials.length === 0 ? (
           <Card>
@@ -137,11 +156,14 @@ export default function Trials() {
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {allTrials.map((trial, i) => {
-              const totalDays = 30;
-              const daysUsed = totalDays - Math.max(trial.daysLeft, 0);
-              const progressPct = Math.min(100, Math.max(0, (daysUsed / totalDays) * 100));
+              // Calculate a rough progress: assume 30-day trial max
+              const trialStartDate = new Date(trial.trialEndDate);
+              trialStartDate.setDate(trialStartDate.getDate() - 30);
+              const totalMs = parseISO(trial.trialEndDate).getTime() - trialStartDate.getTime();
+              const elapsedMs = new Date().getTime() - trialStartDate.getTime();
+              const progressPct = Math.min(100, Math.max(0, (elapsedMs / totalMs) * 100));
 
               return (
                 <motion.div
@@ -150,42 +172,63 @@ export default function Trials() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}
                 >
-                  <Card className={trial.daysLeft <= 3 && trial.daysLeft >= 0 ? "border-red-200 dark:border-red-900/50" : ""}>
+                  <Card className={trial.daysLeft >= 0 && trial.daysLeft <= 3 ? "border-red-200 dark:border-red-900/50" : ""}>
                     <CardContent className="p-5">
-                      <div className="flex items-start justify-between gap-4 mb-4">
-                        <div>
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-semibold text-foreground">{trial.name}</span>
-                            <Badge variant="outline" className="text-xs">{trial.category}</Badge>
-                          </div>
-                          <p className="text-sm text-muted-foreground mt-1">
-                            Trial ends {format(parseISO(trial.trialEndDate), "MMM d, yyyy")}
-                          </p>
-                        </div>
-                        <div className="text-right shrink-0">
-                          <p className="font-semibold text-foreground">${trial.price.toFixed(2)}/{trial.billingCycle === "monthly" ? "mo" : trial.billingCycle === "yearly" ? "yr" : "wk"}</p>
-                          <p className="text-xs text-muted-foreground">after trial</p>
-                        </div>
-                      </div>
+                      <div className="flex items-start gap-4">
+                        {/* Brand icon */}
+                        <ServiceIcon name={trial.name} size="lg" />
 
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${urgencyColor(trial.daysLeft)}`}>
-                            {trial.daysLeft < 0
-                              ? "Expired"
-                              : trial.daysLeft === 0
-                              ? "Ends today"
-                              : `${trial.daysLeft} day${trial.daysLeft !== 1 ? "s" : ""} left`}
-                          </span>
-                          <Button variant="outline" size="sm" className="text-xs h-7">
-                            {trial.daysLeft < 0 ? "Manage" : "Cancel Trial"}
-                          </Button>
-                        </div>
-                        <div className="h-2 rounded-full bg-muted overflow-hidden">
-                          <div
-                            className={`h-full rounded-full transition-all ${urgencyProgressColor(trial.daysLeft)}`}
-                            style={{ width: `${progressPct}%` }}
-                          />
+                        <div className="flex-1 min-w-0">
+                          {/* Top row */}
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="font-semibold text-foreground">{trial.name}</span>
+                                <Badge variant="secondary" className="text-xs">
+                                  {trial.daysLeft >= 0 ? "30-day trial" : "Trial ended"}
+                                </Badge>
+                              </div>
+                              <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                                <Clock className="w-3 h-3" />
+                                Started {format(parseISO(trial.startDate), "MMM d, yyyy")}
+                              </p>
+                            </div>
+                            <div className="text-right shrink-0">
+                              <p className={`text-xl font-bold ${trial.daysLeft >= 0 && trial.daysLeft <= 3 ? "text-red-500" : trial.daysLeft <= 7 && trial.daysLeft >= 0 ? "text-orange-500" : "text-foreground"}`}>
+                                {trial.daysLeft < 0
+                                  ? "Expired"
+                                  : `${trial.daysLeft} day${trial.daysLeft !== 1 ? "s" : ""} left`}
+                              </p>
+                              <p className="text-xs text-muted-foreground mt-0.5">
+                                Renews {format(parseISO(trial.trialEndDate), "MMM d, yyyy")}
+                              </p>
+                              <p className="text-xs font-medium text-foreground">
+                                ${trial.price.toFixed(2)} / {cycleLabel(trial.billingCycle)}
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* Progress bar */}
+                          <div className="mt-3 space-y-1.5">
+                            <div className="h-2 rounded-full bg-muted overflow-hidden">
+                              <div
+                                className={`h-full rounded-full transition-all ${urgencyBarColor(trial.daysLeft)}`}
+                                style={{ width: `${progressPct}%` }}
+                              />
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs text-muted-foreground">
+                                {Math.round(progressPct)}/30 days
+                              </span>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className={`text-xs h-7 ${trial.daysLeft >= 0 && trial.daysLeft <= 7 ? "border-red-300 text-red-600 hover:bg-red-50 dark:border-red-800 dark:text-red-400" : ""}`}
+                              >
+                                {trial.daysLeft < 0 ? "Manage" : "Cancel Trial"}
+                              </Button>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </CardContent>
