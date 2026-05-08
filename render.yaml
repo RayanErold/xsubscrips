@@ -25,9 +25,8 @@ services:
         sync: false
 
   # Frontend Static Site
-  - type: web
+  - type: static_site
     name: substrack-ui
-    runtime: static
     plan: free
     buildCommand: pnpm install && pnpm build:frontend
     staticPublishPath: apps/frontend/dist
