@@ -7,12 +7,14 @@ import {
   date,
   timestamp,
   integer,
+  uuid,
 } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
 export const subscriptionsTable = pgTable("subscriptions", {
   id: serial("id").primaryKey(),
+  userId: uuid("user_id").notNull(),
   name: text("name").notNull(),
   category: text("category").notNull(),
   price: numeric("price", { precision: 10, scale: 2 }).notNull(),
@@ -30,9 +32,30 @@ export const subscriptionsTable = pgTable("subscriptions", {
     .defaultNow(),
 });
 
+export const billingHistoryTable = pgTable("billing_history", {
+  id: serial("id").primaryKey(),
+  subscriptionId: integer("subscription_id")
+    .notNull()
+    .references(() => subscriptionsTable.id, { onDelete: "cascade" }),
+  userId: uuid("user_id").notNull(),
+  billingDate: date("billing_date").notNull(),
+  amount: numeric("amount", { precision: 10, scale: 2 }).notNull(),
+  currency: text("currency").notNull().default("USD"),
+  receiptUrl: text("receipt_url"),
+  status: text("status").notNull().default("paid"),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
+
 export const insertSubscriptionSchema = createInsertSchema(
   subscriptionsTable,
 ).omit({ id: true, createdAt: true });
 
+export const insertBillingHistorySchema = createInsertSchema(
+  billingHistoryTable,
+).omit({ id: true, createdAt: true });
+
 export type InsertSubscription = z.infer<typeof insertSubscriptionSchema>;
 export type Subscription = typeof subscriptionsTable.$inferSelect;
+export type BillingHistory = typeof billingHistoryTable.$inferSelect;
