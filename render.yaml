@@ -29,7 +29,7 @@ services:
     name: substrack-ui
     runtime: static
     buildCommand: pnpm install --no-frozen-lockfile && pnpm build:frontend
-    staticPublishPath: apps/frontend/dist
+    staticPublishPath: apps/frontend/dist/public
     envVars:
       - key: VITE_SUPABASE_URL
         sync: false
