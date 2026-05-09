@@ -1,6 +1,6 @@
-# SubsTrack - Enterprise Asset & Subscription Manager
+# X Subscription - Enterprise Asset & Subscription Manager
 
-SubsTrack is a modern, full-stack SaaS application designed to help users track, manage, and optimize their recurring software subscriptions. It is built with a highly scalable **Monorepo Architecture** using `pnpm workspaces`, decoupling the frontend, backend, and database schema into isolated, reusable packages.
+X Subscription is a modern, full-stack SaaS application designed to help users track, manage, and optimize their recurring software subscriptions. It is built with a highly scalable **Monorepo Architecture** using `pnpm workspaces`, decoupling the frontend, backend, and database schema into isolated, reusable packages.
 
 ## 🏗️ Architecture & Project Structure
 
@@ -8,13 +8,13 @@ To maintain clean separation of concerns and allow the project to scale to a lar
 
 ```text
 Asset-Manager/
-├── artifacts/
-│   ├── substrack/          # 🖥️ FRONTEND: React (Vite) Single Page Application
+├── apps/
+│   ├── frontend/           # 🖥️ FRONTEND: React (Vite) Single Page Application
 │   │   ├── src/components/ # Reusable UI components (Glassmorphism, Forms, Layouts)
 │   │   ├── src/pages/      # Route-level views (Dashboard, Login, Analytics)
 │   │   └── src/contexts/   # React Context providers (Auth, Global State)
 │   │
-│   └── api-server/         # ⚙️ BACKEND: Express.js REST API
+│   └── backend/            # ⚙️ BACKEND: Express.js REST API
 │       ├── src/routes/     # API Route handlers (Subscriptions, Analytics, Health)
 │       ├── src/middleware/ # Express middlewares (JWT Auth verification)
 │       └── src/lib/        # Backend utilities and Supabase server clients
@@ -34,7 +34,7 @@ Asset-Manager/
 ## 🔐 Security & Authentication
 
 The platform utilizes **Supabase** for secure, enterprise-grade authentication and data storage.
-- **Frontend**: Handles User Sessions, OAuth (Google/Apple), and Email verification. Injects JWT Bearer tokens into all API calls via `api-client-react`.
+- **Frontend**: Handles User Sessions, OAuth (Google), and Email verification. Injects JWT Bearer tokens into all API calls via `api-client-react`.
 - **Backend Middleware**: The Express.js server verifies JWTs cryptographically before processing requests.
 - **Database (RLS)**: Row Level Security is enforced directly inside PostgreSQL. Even if the backend is compromised, data isolation guarantees that `auth.uid() = user_id`.
 
@@ -84,19 +84,19 @@ SUPABASE_ANON_KEY="eyJhb..."
 
 ### 3. Run the Backend API
 ```bash
-$env:PORT=8081; npx pnpm --filter @workspace/api-server run start
+npx pnpm --filter @workspace/api-server run start
 ```
 
 ### 4. Run the Frontend App
 ```bash
-$env:PORT=19318; $env:BASE_PATH="/"; npx pnpm --filter @workspace/substrack run dev
+npx pnpm --filter @workspace/frontend run dev
 ```
 
 ---
 
 ## 🤖 Future AI Roadmap (LLM Integration)
 
-To elevate SubsTrack from a traditional SaaS to an intelligent, agentic platform, we plan to integrate **Google Gemini 2.5 Pro** directly into the application flow. 
+To elevate X Subscription from a traditional SaaS to an intelligent, agentic platform, we integrate **Google Gemini 2.5 Pro** directly into the application flow. 
 
 **Upcoming AI Features:**
 1. **Invoice Parsing Agent (Vision AI):**
@@ -105,6 +105,6 @@ To elevate SubsTrack from a traditional SaaS to an intelligent, agentic platform
 2. **Predictive Financial Insights:**
    * An LLM agent running in the background will analyze the user's `$ spend-over-time` analytics to predict future churn probability or alert the user to irregular price hikes in specific software sectors.
 3. **Automated Cancellation Workflows:**
-   * An intelligent assistant that uses headless browsing (or deep links) to help users automatically navigate the complicated cancellation flows of platforms like Adobe or Gym memberships.
+   * An intelligent assistant that helps users automatically navigate the complicated cancellation flows of platforms like Adobe or Gym memberships.
 4. **Smart Categorization:**
    * When a user types "GitHub Copilot", Gemini will automatically categorize it as `Developer Tools` and suggest average market pricing based on current trends.
