@@ -15,6 +15,10 @@ const app: Express = express();
 app.use(
   pinoHttp({
     logger,
+    // Only log API routes — suppress frontend static file/SPA logs
+    autoLogging: {
+      ignore: (req) => !req.url?.startsWith("/api"),
+    },
     serializers: {
       req(req) {
         return {

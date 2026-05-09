@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { supabase } from "../lib/supabase";
 import { db, usersTable } from "@workspace/db";
 import { sql } from "drizzle-orm";
+import { logger } from "../lib/logger";
 
 export interface AuthenticatedRequest extends Request {
   user?: {
@@ -55,13 +56,13 @@ export const requireAuth = async (
           });
       } catch (dbError) {
         // Log but don't block the request if user sync fails
-        console.error("Failed to sync user to public table:", dbError);
+        logger.warn({ dbError }, "Failed to sync user to public users table");
       }
     }
 
     next();
   } catch (error) {
-    console.error("Auth middleware error:", error);
+    logger.error({ error }, "Auth middleware error");
     res.status(500).json({ error: "Internal server error during authentication" });
   }
 };

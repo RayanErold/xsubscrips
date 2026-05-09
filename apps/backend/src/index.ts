@@ -1,6 +1,16 @@
+import "dotenv/config";
 import app from "./app";
 import { logger } from "./lib/logger";
 import { initCronJobs } from "./lib/cron";
+import path from "path";
+import { fileURLToPath } from "url";
+import { config } from "dotenv";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Explicitly load .env from the root workspace directory
+config({ path: path.resolve(__dirname, "../../../.env") });
 
 const rawPort = process.env["PORT"];
 

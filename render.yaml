@@ -1,7 +1,7 @@
 services:
   # Unified Full-Stack Service
   - type: web
-    name: substrack
+    name: xsubscrips
     runtime: node
     plan: free
     buildCommand: pnpm install --no-frozen-lockfile && pnpm build:frontend && pnpm build:backend
@@ -30,13 +30,13 @@ services:
       - key: VITE_SUPABASE_URL
         fromService:
           type: web
-          name: substrack
+          name: xsubscrips
           property: envVar
           key: SUPABASE_URL
       - key: VITE_SUPABASE_ANON_KEY
         fromService:
           type: web
-          name: substrack
+          name: xsubscrips
           property: envVar
           key: SUPABASE_ANON_KEY
       - key: VITE_API_URL

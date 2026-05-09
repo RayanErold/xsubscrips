@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useGetNotifications } from "@workspace/api-client-react";
 
-const SEEN_KEY = "substrack_seen_notifications";
+const SEEN_KEY = "xsubscrips_seen_notifications";
 
 function getSeenIds(): Set<string> {
   try {
@@ -49,7 +49,7 @@ const SEVERITY_STYLES = {
 
 export function NotificationBell() {
   const { data: notifications = [] } = useGetNotifications({
-    query: { refetchInterval: 60_000 },
+    query: { queryKey: ["notifications"], refetchInterval: 60_000 },
   });
 
   const [open, setOpen] = useState(false);

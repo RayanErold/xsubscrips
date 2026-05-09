@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { ArrowRight, BarChart2, Bell, CreditCard, Shield, TrendingDown, CheckCircle2, Zap, Clock } from "lucide-react";
@@ -30,7 +31,8 @@ const features = [
 const pricingPlans = [
   {
     name: "Free",
-    price: "$0",
+    monthly: 0,
+    yearly: 0,
     period: "forever",
     description: "Perfect for getting started",
     features: ["Up to 10 subscriptions", "Trial tracking", "Basic analytics", "Email reminders"],
@@ -39,12 +41,23 @@ const pricingPlans = [
   },
   {
     name: "Pro",
-    price: "$4",
+    monthly: 8,
+    yearly: 5,
     period: "per month",
-    description: "For power users",
+    description: "For individuals who want full control",
     features: ["Unlimited subscriptions", "Advanced analytics", "Priority reminders", "CSV export", "Dark mode"],
     cta: "Start Pro Trial",
     highlighted: true,
+  },
+  {
+    name: "Business",
+    monthly: 20,
+    yearly: 13,
+    period: "per month",
+    description: "For teams & small businesses",
+    features: ["Everything in Pro", "Up to 10 team members", "Shared subscription workspace", "Admin dashboard", "API access", "Dedicated support"],
+    cta: "Contact Sales",
+    highlighted: false,
   },
 ];
 
@@ -55,6 +68,7 @@ const stats = [
 ];
 
 export default function Landing() {
+  const [isYearly, setIsYearly] = useState(false);
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Nav */}
@@ -62,13 +76,13 @@ export default function Landing() {
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2 font-bold text-lg text-primary">
             <BarChart2 className="w-5 h-5" />
-            SubsTrack
+            Xsubscrips
           </div>
           <div className="flex items-center gap-3">
-            <Link href="/dashboard">
-              <Button variant="ghost" size="sm">Dashboard</Button>
+            <Link href="/login">
+              <Button variant="ghost" size="sm">Log In</Button>
             </Link>
-            <Link href="/dashboard">
+            <Link href="/login">
               <Button size="sm">Get Started Free</Button>
             </Link>
           </div>
@@ -90,17 +104,17 @@ export default function Landing() {
             <span className="text-primary">Save money.</span> Stress less.
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-            The average person wastes $348 a year on forgotten subscriptions. SubsTrack shows you exactly what you're paying for — and when to cancel.
+            The average person wastes $348 a year on forgotten subscriptions. Xsubscrips shows you exactly what you're paying for — and when to cancel.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link href="/dashboard">
+            <Link href="/login">
               <Button size="lg" className="gap-2 text-base px-8">
                 Get Started Free <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
-            <Link href="/dashboard">
+            <Link href="/login">
               <Button variant="outline" size="lg" className="text-base px-8">
-                View Dashboard
+                Log In
               </Button>
             </Link>
           </div>
@@ -198,12 +212,36 @@ export default function Landing() {
 
       {/* Pricing */}
       <section className="max-w-6xl mx-auto px-6 py-24">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold text-foreground mb-4">Simple pricing</h2>
-          <p className="text-muted-foreground text-lg">Start free. Upgrade when you're ready.</p>
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-foreground mb-4">Simple, value-based pricing</h2>
+          <p className="text-muted-foreground text-lg mb-8">Start free. Upgrade when you're ready.</p>
+          {/* Billing Toggle */}
+          <div className="inline-flex items-center gap-3 bg-muted rounded-full p-1">
+            <button
+              onClick={() => setIsYearly(false)}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
+                !isYearly ? "bg-background text-foreground shadow" : "text-muted-foreground"
+              }`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setIsYearly(true)}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
+                isYearly ? "bg-background text-foreground shadow" : "text-muted-foreground"
+              }`}
+            >
+              Yearly
+              <span className="text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded-full">Save 37%</span>
+            </button>
+          </div>
         </div>
-        <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-          {pricingPlans.map((plan) => (
+        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          {pricingPlans.map((plan) => {
+            const price = plan.monthly === 0 ? "$0" : `$${isYearly ? plan.yearly : plan.monthly}`;
+            const periodLabel = plan.monthly === 0 ? "forever" : "per month";
+            const yearlyNote = isYearly && plan.monthly > 0 ? `$${plan.yearly * 12} billed annually` : null;
+            return (
             <div
               key={plan.name}
               className={`rounded-xl border p-8 ${
@@ -218,9 +256,12 @@ export default function Landing() {
               <div className="mb-6">
                 <h3 className="text-xl font-bold text-foreground">{plan.name}</h3>
                 <div className="mt-2">
-                  <span className="text-4xl font-bold text-foreground">{plan.price}</span>
-                  <span className="text-muted-foreground ml-1">/{plan.period}</span>
+                  <span className="text-4xl font-bold text-foreground">{price}</span>
+                  <span className="text-muted-foreground ml-1">/{periodLabel}</span>
                 </div>
+                {yearlyNote && (
+                  <p className="text-xs text-primary mt-1">{yearlyNote}</p>
+                )}
                 <p className="text-sm text-muted-foreground mt-2">{plan.description}</p>
               </div>
               <ul className="space-y-3 mb-8">
@@ -231,7 +272,7 @@ export default function Landing() {
                   </li>
                 ))}
               </ul>
-              <Link href="/dashboard">
+              <Link href="/login">
                 <Button
                   className="w-full"
                   variant={plan.highlighted ? "default" : "outline"}
@@ -240,7 +281,8 @@ export default function Landing() {
                 </Button>
               </Link>
             </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
@@ -258,9 +300,9 @@ export default function Landing() {
             <p className="text-primary-foreground/80 text-lg mb-8">
               Join thousands of people who've taken back control of their subscription spending.
             </p>
-            <Link href="/dashboard">
+            <Link href="/login">
               <Button size="lg" variant="secondary" className="gap-2 px-8">
-                Start Tracking Free <ArrowRight className="w-4 h-4" />
+                Get Started for Free <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
           </motion.div>
@@ -272,7 +314,7 @@ export default function Landing() {
         <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2 text-primary font-semibold">
             <BarChart2 className="w-4 h-4" />
-            SubsTrack
+            Xsubscrips
           </div>
           <p className="text-sm text-muted-foreground">
             Built to help you spend smarter.

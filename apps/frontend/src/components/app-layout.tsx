@@ -13,7 +13,7 @@ const navItems = [
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
-function SubsTrackLogo() {
+function XsubscripsLogo() {
   return (
     <div className="flex items-center gap-2.5">
       {/* Product icon mark */}
@@ -31,20 +31,21 @@ function SubsTrackLogo() {
           <path d="M11 12 L12 13 L13.5 11" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       </div>
-      <span className="font-bold text-lg tracking-tight text-foreground">SubsTrack</span>
+      <span className="font-bold text-lg tracking-tight text-foreground">Xsubscrips</span>
     </div>
   );
 }
 
 export function AppLayout({ children }: { children: ReactNode }) {
   const [location] = useLocation();
+  const { signOut } = useAuth();
 
   return (
     <div className="min-h-screen bg-background flex flex-col md:flex-row">
       <aside className="w-full md:w-64 border-r border-border bg-sidebar shrink-0 md:h-screen sticky top-0 flex flex-col">
         <div className="p-5 pb-4 flex items-center justify-between">
           <Link href="/dashboard" className="cursor-pointer">
-            <SubsTrackLogo />
+            <XsubscripsLogo />
           </Link>
           <NotificationBell />
         </div>
@@ -70,7 +71,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
         <div className="p-4 hidden md:block border-t border-border mt-auto">
           <Button
             variant="ghost"
-            onClick={() => useAuth().signOut()}
+            onClick={() => signOut()}
             className="w-full justify-start gap-3 text-red-500 hover:text-red-600 hover:bg-red-500/10"
           >
             <LogOut className="w-4 h-4" />

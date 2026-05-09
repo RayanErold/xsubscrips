@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
+    "dev": "pnpm --parallel --filter @workspace/backend --filter @workspace/frontend dev",
     "build": "pnpm -r --if-present run build",
     "build:backend": "pnpm --filter @workspace/backend build",
     "build:frontend": "pnpm --filter @workspace/frontend build",

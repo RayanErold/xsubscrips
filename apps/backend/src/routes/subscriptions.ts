@@ -118,7 +118,7 @@ router.post("/subscriptions", async (req: AuthenticatedRequest, res: Response) =
 // GET /subscriptions/:id
 router.get("/subscriptions/:id", async (req: AuthenticatedRequest, res: Response) => {
   const userId = req.user!.id;
-  const id = parseInt(req.params.id);
+  const id = parseInt(req.params.id as string);
   if (isNaN(id)) {
     res.status(400).json({ error: "Invalid id" });
     return;
@@ -140,7 +140,7 @@ router.get("/subscriptions/:id", async (req: AuthenticatedRequest, res: Response
 // PUT /subscriptions/:id
 router.put("/subscriptions/:id", async (req: AuthenticatedRequest, res: Response) => {
   const userId = req.user!.id;
-  const id = parseInt(req.params.id);
+  const id = parseInt(req.params.id as string);
   if (isNaN(id)) {
     res.status(400).json({ error: "Invalid id" });
     return;
@@ -184,7 +184,7 @@ router.put("/subscriptions/:id", async (req: AuthenticatedRequest, res: Response
 // DELETE /subscriptions/:id
 router.delete("/subscriptions/:id", async (req: AuthenticatedRequest, res: Response) => {
   const userId = req.user!.id;
-  const id = parseInt(req.params.id);
+  const id = parseInt(req.params.id as string);
   if (isNaN(id)) {
     res.status(400).json({ error: "Invalid id" });
     return;
@@ -473,7 +473,7 @@ router.get("/subscriptions/export", async (req: AuthenticatedRequest, res: Respo
   res.setHeader("Content-Type", "text/csv");
   res.setHeader(
     "Content-Disposition",
-    `attachment; filename="substrack-export-${new Date().toISOString().split("T")[0]}.csv"`,
+    `attachment; filename="xsubscrips-export-${new Date().toISOString().split("T")[0]}.csv"`,
   );
   res.send(csv);
 });
@@ -504,7 +504,11 @@ router.get("/analytics/top-subscriptions", async (req: AuthenticatedRequest, res
 // GET /subscriptions/:id/history
 router.get("/subscriptions/:id/history", async (req: AuthenticatedRequest, res: Response) => {
   const userId = req.user!.id;
-  const subId = parseInt(req.params.id);
+  const subId = parseInt(req.params.id as string);
+  if (isNaN(subId)) {
+    res.status(400).json({ error: "Invalid id" });
+    return;
+  }
 
   const history = await db
     .select()
@@ -522,8 +526,12 @@ router.get("/subscriptions/:id/history", async (req: AuthenticatedRequest, res: 
 // POST /subscriptions/:id/history
 router.post("/subscriptions/:id/history", async (req: AuthenticatedRequest, res: Response) => {
   const userId = req.user!.id;
-  const subId = parseInt(req.params.id);
-  
+  const subId = parseInt(req.params.id as string);
+  if (isNaN(subId)) {
+    res.status(400).json({ error: "Invalid id" });
+    return;
+  }
+
   const parsed = z.object({
     billingDate: z.string(),
     amount: z.number(),

@@ -11,6 +11,7 @@ import { FaGoogle, FaApple } from "react-icons/fa";
 export default function Login() {
   const [, setLocation] = useLocation();
   const [loading, setLoading] = useState(false);
+  const [oauthLoading, setOauthLoading] = useState<"google" | "apple" | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -80,6 +81,7 @@ export default function Login() {
   };
 
   const handleOAuthLogin = async (provider: "google" | "apple") => {
+    setOauthLoading(provider);
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
@@ -88,12 +90,14 @@ export default function Login() {
     });
 
     if (error) {
+      setOauthLoading(null);
       toast({
         title: "OAuth login failed",
         description: error.message,
         variant: "destructive",
       });
     }
+    // Note: on success the browser redirects, so we don't reset oauthLoading
   };
 
   return (
@@ -120,17 +124,19 @@ export default function Login() {
             variant="outline"
             className="w-full bg-white/50 dark:bg-black/50 backdrop-blur-sm border-white/20 hover:bg-white/80 dark:hover:bg-white/10 transition-all text-foreground h-12"
             onClick={() => handleOAuthLogin("google")}
+            disabled={oauthLoading !== null}
           >
             <FaGoogle className="w-5 h-5 mr-3 text-red-500" />
-            Continue with Google
+            {oauthLoading === "google" ? "Redirecting..." : "Continue with Google"}
           </Button>
           <Button
             variant="outline"
             className="w-full bg-white/50 dark:bg-black/50 backdrop-blur-sm border-white/20 hover:bg-white/80 dark:hover:bg-white/10 transition-all text-foreground h-12"
             onClick={() => handleOAuthLogin("apple")}
+            disabled={oauthLoading !== null}
           >
             <FaApple className="w-5 h-5 mr-3" />
-            Continue with Apple
+            {oauthLoading === "apple" ? "Redirecting..." : "Continue with Apple"}
           </Button>
         </div>
 
