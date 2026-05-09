@@ -74,9 +74,13 @@ export default function Landing() {
       {/* Nav */}
       <nav className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2 font-bold text-lg text-primary">
-            <BarChart2 className="w-5 h-5" />
-            Xsubscrips
+          <div className="flex items-center gap-2.5 group">
+            <div className="w-8 h-8 bg-foreground rounded-lg flex items-center justify-center transition-transform group-hover:scale-105 shadow-sm">
+              <span className="text-background text-base font-bold italic tracking-tighter">X</span>
+            </div>
+            <span className="text-xl font-bold tracking-tight text-foreground">
+              X Subscription
+            </span>
           </div>
           <div className="flex items-center gap-3">
             <Link href="/login">
@@ -104,7 +108,7 @@ export default function Landing() {
             <span className="text-primary">Save money.</span> Stress less.
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-            The average person wastes $348 a year on forgotten subscriptions. Xsubscrips shows you exactly what you're paying for — and when to cancel.
+            The average person wastes $348 a year on forgotten subscriptions. X Subscription shows you exactly what you're paying for — and when to cancel.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/login">
@@ -312,9 +316,11 @@ export default function Landing() {
       {/* Footer */}
       <footer className="border-t border-border py-10">
         <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-primary font-semibold">
-            <BarChart2 className="w-4 h-4" />
-            Xsubscrips
+          <div className="flex items-center gap-2 text-foreground font-semibold">
+            <div className="w-6 h-6 bg-foreground rounded flex items-center justify-center">
+              <span className="text-background text-xs font-bold italic tracking-tighter">X</span>
+            </div>
+            X Subscription
           </div>
           <p className="text-sm text-muted-foreground">
             Built to help you spend smarter.

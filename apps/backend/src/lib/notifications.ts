@@ -157,7 +157,7 @@ async function sendReminderEmail(
 
   try {
     await resend.emails.send({
-      from: "Xsubscrips <onboarding@resend.dev>",
+      from: "X Subscription <onboarding@resend.dev>",
       to: userEmail,
       subject,
       html: `
@@ -176,7 +176,7 @@ async function sendReminderEmail(
               : ""
           }
           <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;" />
-          <p style="font-size: 12px; color: #666;">This is an automated message from Xsubscrips.</p>
+          <p style="font-size: 12px; color: #666;">This is an automated message from X Subscription.</p>
         </div>
       `,
     });

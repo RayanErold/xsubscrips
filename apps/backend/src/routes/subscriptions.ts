@@ -473,7 +473,7 @@ router.get("/subscriptions/export", async (req: AuthenticatedRequest, res: Respo
   res.setHeader("Content-Type", "text/csv");
   res.setHeader(
     "Content-Disposition",
-    `attachment; filename="xsubscrips-export-${new Date().toISOString().split("T")[0]}.csv"`,
+    `attachment; filename="x-subscription-export-${new Date().toISOString().split("T")[0]}.csv"`,
   );
   res.send(csv);
 });

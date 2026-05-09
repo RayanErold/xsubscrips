@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useGetNotifications } from "@workspace/api-client-react";
 
-const SEEN_KEY = "xsubscrips_seen_notifications";
+const SEEN_KEY = "x_subscription_seen_notifications";
 
 function getSeenIds(): Set<string> {
   try {
