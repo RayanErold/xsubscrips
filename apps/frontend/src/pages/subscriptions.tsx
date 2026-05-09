@@ -89,7 +89,7 @@ export default function Subscriptions() {
             <h1 className="text-2xl font-bold text-foreground">Subscriptions</h1>
             <p className="text-muted-foreground text-sm mt-1">
               {filtered.length} subscription{filtered.length !== 1 ? "s" : ""}
-              {totalMonthly > 0 && ` · $${totalMonthly.toFixed(2)}/mo active`}
+              {totalMonthly > 0 && ` · $${(totalMonthly ?? 0).toFixed(2)}/mo active`}
             </p>
           </div>
           <Button onClick={() => setAddOpen(true)} className="gap-2">
@@ -205,10 +205,10 @@ export default function Subscriptions() {
 
                         <div className="text-right shrink-0">
                           <p className="font-semibold text-foreground">
-                            ${sub.price.toFixed(2)}
+                            ${(sub.price ?? 0).toFixed(2)}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            ${toMonthly(sub.price, sub.billingCycle).toFixed(2)}/mo
+                            ${(toMonthly(sub.price, sub.billingCycle) ?? 0).toFixed(2)}/mo
                           </p>
                         </div>
 

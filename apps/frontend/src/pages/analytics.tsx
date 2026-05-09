@@ -66,7 +66,7 @@ export default function Analytics() {
                 <Card className="border-primary/20 bg-primary/5">
                   <CardContent className="p-6">
                     <p className="text-sm text-muted-foreground font-medium">Monthly Spend</p>
-                    <p className="text-3xl font-bold text-primary mt-1">${summary.monthlySpend.toFixed(2)}</p>
+                    <p className="text-3xl font-bold text-primary mt-1">${(summary.monthlySpend ?? 0).toFixed(2)}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -74,7 +74,7 @@ export default function Analytics() {
                 <Card>
                   <CardContent className="p-6">
                     <p className="text-sm text-muted-foreground font-medium">Yearly Spend</p>
-                    <p className="text-3xl font-bold text-foreground mt-1">${summary.yearlySpend.toFixed(2)}</p>
+                    <p className="text-3xl font-bold text-foreground mt-1">${(summary.yearlySpend ?? 0).toFixed(2)}</p>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -125,7 +125,7 @@ export default function Analytics() {
                           ))}
                         </Pie>
                         <Tooltip
-                          formatter={(value: number) => [`$${value.toFixed(2)}/mo`, "Spend"]}
+                          formatter={(value: number) => [`$${(value ?? 0).toFixed(2)}/mo`, "Spend"]}
                         />
                       </PieChart>
                     </ResponsiveContainer>
@@ -139,7 +139,7 @@ export default function Analytics() {
                             />
                             <span className="text-foreground truncate max-w-[120px]">{item.name}</span>
                           </div>
-                          <span className="font-medium text-foreground">${toMonthly(item.price, item.billingCycle).toFixed(2)}/mo</span>
+                          <span className="font-medium text-foreground">${(toMonthly(item.price, item.billingCycle) ?? 0).toFixed(2)}/mo</span>
                         </div>
                       ))}
                     </div>
@@ -183,7 +183,7 @@ export default function Analytics() {
                         width={50}
                       />
                       <Tooltip
-                        formatter={(value: number) => [`$${value.toFixed(2)}`, "Monthly Spend"]}
+                        formatter={(value: number) => [`$${(value ?? 0).toFixed(2)}`, "Monthly Spend"]}
                         contentStyle={{
                           background: "hsl(var(--card))",
                           border: "1px solid hsl(var(--border))",
@@ -234,7 +234,7 @@ export default function Analytics() {
                         <div className="flex-1 min-w-0">
                           <div className="flex justify-between text-sm mb-1">
                             <span className="font-medium text-foreground truncate">{sub.name}</span>
-                            <span className="text-muted-foreground ml-4">${monthly.toFixed(2)}/mo</span>
+                            <span className="text-muted-foreground ml-4">${(monthly ?? 0).toFixed(2)}/mo</span>
                           </div>
                           <div className="h-1.5 rounded-full bg-muted overflow-hidden">
                             <div

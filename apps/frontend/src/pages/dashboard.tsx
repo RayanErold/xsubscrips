@@ -93,8 +93,8 @@ export default function Dashboard() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <StatCard
               title="Monthly Spend"
-              value={`$${summary.monthlySpend.toFixed(2)}`}
-              subtitle={`$${summary.yearlySpend.toFixed(0)}/year`}
+              value={`$${(summary.monthlySpend ?? 0).toFixed(2)}`}
+              subtitle={`$${(summary.yearlySpend ?? 0).toFixed(0)}/year`}
               icon={DollarSign}
               accent
               delay={0}
@@ -133,7 +133,7 @@ export default function Dashboard() {
               <TrendingUp className="w-5 h-5 text-amber-600 dark:text-amber-400" />
               <div>
                 <p className="text-sm font-medium text-amber-900 dark:text-amber-200">
-                  Potential savings: ${summary.savingsOpportunity.toFixed(2)}/month
+                  Potential savings: ${(summary.savingsOpportunity ?? 0).toFixed(2)}/month
                 </p>
                 <p className="text-xs text-amber-700 dark:text-amber-400">
                   You have paused subscriptions still costing money.
@@ -203,7 +203,7 @@ export default function Dashboard() {
                           </p>
                         </div>
                         <div className="text-right shrink-0">
-                          <p className="font-semibold text-foreground">${sub.price.toFixed(2)}</p>
+                          <p className="font-semibold text-foreground">${(sub.price ?? 0).toFixed(2)}</p>
                           <p className="text-xs text-muted-foreground">{sub.billingCycle}</p>
                         </div>
                       </CardContent>
