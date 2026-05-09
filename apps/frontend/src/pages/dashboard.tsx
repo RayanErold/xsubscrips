@@ -174,7 +174,7 @@ export default function Dashboard() {
                 </Card>
               ))}
             </div>
-          ) : upcoming && upcoming.length > 0 ? (
+          ) : Array.isArray(upcoming) && upcoming.length > 0 ? (
             <div className="space-y-2">
               {upcoming.map((sub, i) => {
                 const daysLeft = differenceInDays(parseISO(sub.nextBillingDate), new Date());

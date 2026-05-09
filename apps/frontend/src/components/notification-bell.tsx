@@ -57,7 +57,7 @@ export function NotificationBell() {
   const panelRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
 
-  const unseenCount = notifications.filter((n) => !seenIds.has(n.id)).length;
+  const unseenCount = (Array.isArray(notifications) ? notifications : []).filter((n) => !seenIds.has(n.id)).length;
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {

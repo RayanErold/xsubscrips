@@ -70,7 +70,7 @@ export default function Subscriptions() {
     },
   });
 
-  const filtered = (subscriptions ?? []).filter((s) => {
+  const filtered = (Array.isArray(subscriptions) ? subscriptions : []).filter((s) => {
     const matchesSearch = s.name.toLowerCase().includes(search.toLowerCase()) ||
       s.category.toLowerCase().includes(search.toLowerCase());
     const matchesCategory = categoryFilter === "all" || s.category === categoryFilter;

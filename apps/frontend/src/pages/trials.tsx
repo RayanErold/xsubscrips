@@ -61,7 +61,7 @@ function cycleLabel(cycle: string) {
 export default function Trials() {
   const { data: subscriptions, isLoading } = useListSubscriptions({});
 
-  const trialSubs = (subscriptions ?? []).filter((s) => s.hasTrial && s.trialEndDate);
+  const trialSubs = (Array.isArray(subscriptions) ? subscriptions : []).filter((s) => s.hasTrial && s.trialEndDate);
 
   const trials: Trial[] = trialSubs.map((s) => ({
     id: s.id,
