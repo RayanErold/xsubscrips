@@ -1,16 +1,19 @@
 services:
-  # Backend Web Service
+  # Unified Full-Stack Service
   - type: web
-    name: substrack-api
+    name: substrack
     runtime: node
     plan: free
-    buildCommand: pnpm install --no-frozen-lockfile && pnpm build:backend
+    buildCommand: pnpm install --no-frozen-lockfile && pnpm build:frontend && pnpm build:backend
     startCommand: pnpm start:backend
     envVars:
       - key: NODE_ENV
         value: production
       - key: PORT
         value: 8081
+      - key: BASE_PATH
+        value: /
+      # Backend Keys
       - key: DATABASE_URL
         sync: false
       - key: SUPABASE_URL
@@ -23,24 +26,10 @@ services:
         sync: false
       - key: RESEND_API_KEY
         sync: false
-
-  # Frontend Static Site
-  - type: web
-    name: substrack-ui
-    runtime: static
-    buildCommand: pnpm install --no-frozen-lockfile && pnpm build:frontend
-    staticPublishPath: apps/frontend/dist/public
-    envVars:
+      # Frontend Keys (Used during build)
       - key: VITE_SUPABASE_URL
         sync: false
       - key: VITE_SUPABASE_ANON_KEY
         sync: false
-      - key: BASE_PATH
-        value: /
-      - key: PORT
-        value: 5173
       - key: VITE_API_URL
-        fromService:
-          name: substrack-api
-          type: web
-          property: host
+        value: /api

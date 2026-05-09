@@ -4,7 +4,7 @@ import "./index.css";
 import { setBaseUrl, setAuthTokenGetter } from "@workspace/api-client-react";
 import { supabase } from "./lib/supabaseClient";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8081";
+const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? "/api" : "http://localhost:8081");
 setBaseUrl(API_URL);
 
 setAuthTokenGetter(async () => {
