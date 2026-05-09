@@ -21,6 +21,7 @@ export default function Login() {
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Attempting email auth...", { email, isSignUp });
     setLoading(true);
 
     if (isSignUp) {

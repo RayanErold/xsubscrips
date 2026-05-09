@@ -28,8 +28,16 @@ services:
         sync: false
       # Frontend Keys (Used during build)
       - key: VITE_SUPABASE_URL
-        sync: false
+        fromService:
+          type: web
+          name: substrack
+          property: envVar
+          key: SUPABASE_URL
       - key: VITE_SUPABASE_ANON_KEY
-        sync: false
+        fromService:
+          type: web
+          name: substrack
+          property: envVar
+          key: SUPABASE_ANON_KEY
       - key: VITE_API_URL
         value: /api
