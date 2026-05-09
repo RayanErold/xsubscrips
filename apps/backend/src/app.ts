@@ -43,7 +43,7 @@ const frontendDistPath = path.resolve(__dirname, "../../frontend/dist/public");
 app.use(express.static(frontendDistPath));
 
 // Catch-all route for SPA
-app.get("*", (req, res) => {
+app.get("/(.*)", (req, res) => {
   res.sendFile(path.join(frontendDistPath, "index.html"));
 });
 
