@@ -8,6 +8,7 @@ const router = Router();
 // Get current user settings
 router.get("/user/settings", async (req, res) => {
   const userId = (req as any).user.id;
+  console.log(`[GET /user/settings] Fetching settings for user: ${userId}`);
 
   try {
     const [user] = await db
@@ -16,9 +17,11 @@ router.get("/user/settings", async (req, res) => {
       .where(eq(usersTable.id, userId));
 
     if (!user) {
+      console.log(`[GET /user/settings] User ${userId} not found in public.users table`);
       return res.status(404).json({ error: "User not found" });
     }
 
+    console.log(`[GET /user/settings] Successfully fetched settings for ${userId}`);
     res.json(user);
   } catch (error) {
     logger.error({ error, userId }, "Failed to fetch user settings");
@@ -29,7 +32,10 @@ router.get("/user/settings", async (req, res) => {
 // Update user settings
 router.patch("/user/settings", async (req, res) => {
   const userId = (req as any).user.id;
-  const { fullName, trialReminders, renewalReminders, weeklySummary, emailDigest, currency } = req.body;
+  const body = req.body;
+  console.log(`[PATCH /user/settings] Updating settings for user: ${userId}`, body);
+
+  const { fullName, trialReminders, renewalReminders, weeklySummary, emailDigest, currency } = body;
 
   try {
     const [updatedUser] = await db
