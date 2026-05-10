@@ -1,6 +1,15 @@
 import "dotenv/config";
-import app from "./app";
 import { logger } from "./lib/logger";
+
+// Prevent the process from exiting on unhandled errors
+process.on("unhandledRejection", (reason, promise) => {
+  logger.error({ reason, promise }, "Unhandled Rejection at Promise");
+});
+
+process.on("uncaughtException", (err) => {
+  logger.error({ err }, "Uncaught Exception thrown");
+});
+import app from "./app";
 import { initCronJobs } from "./lib/cron";
 import path from "path";
 import { fileURLToPath } from "url";
