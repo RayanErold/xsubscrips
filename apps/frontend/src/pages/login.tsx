@@ -31,6 +31,7 @@ export default function Login() {
           data: {
             first_name: firstName,
             last_name: lastName,
+            ab_variant: localStorage.getItem("ab-test-hero_v2") || "A",
           }
         }
       });
