@@ -26,23 +26,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     let mounted = true;
     
-    // Safety timeout: Never stay in loading state longer than 4 seconds
-    const timeout = setTimeout(() => {
-      if (mounted && loading) {
-        setLoading(false);
-      }
-    }, 4000);
-
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!mounted) return;
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-      clearTimeout(timeout);
-    }).catch(() => {
-      if (mounted) setLoading(false);
-    });
+    const initAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!mounted) return;
+        
+        setSession(session);
+        setUser(session?.user ?? null);
+        setLoading(false);
+      } catch (error) {
+        console.error("Auth init error:", error);
+        if (mounted) setLoading(false);
+      }
+    };
+
+    initAuth();
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -51,14 +50,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
-        clearTimeout(timeout);
       }
     );
+
+    // Backup safety: ensure loading screen disappears after 10s regardless
+    const safetyTimer = setTimeout(() => {
+      if (mounted) setLoading(false);
+    }, 10000);
 
     return () => {
       mounted = false;
       subscription.unsubscribe();
-      clearTimeout(timeout);
+      clearTimeout(safetyTimer);
     };
   }, []);
 
