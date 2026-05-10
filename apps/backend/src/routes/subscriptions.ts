@@ -205,45 +205,43 @@ router.get("/dashboard/summary", async (req: AuthenticatedRequest, res: Response
     .toISOString()
     .split("T")[0];
 
-  const rows = await db
+  // Optimized: Single query for counts and spend
+  const allSubs = await db
     .select()
     .from(subscriptionsTable)
-    .where(and(eq(subscriptionsTable.status, "active"), eq(subscriptionsTable.userId, userId)));
+    .where(eq(subscriptionsTable.userId, userId));
 
   let monthlySpend = 0;
   let upcomingRenewals = 0;
+  let trialsEndingSoon = 0;
+  let savingsOpportunity = 0;
+  let activeCount = 0;
 
-  for (const row of rows) {
+  for (const row of allSubs) {
     const price = parseFloat(row.price as unknown as string);
-    monthlySpend += toMonthlyAmount(price, row.billingCycle);
-    if (
-      row.nextBillingDate >= today &&
-      row.nextBillingDate <= in30Days
-    ) {
-      upcomingRenewals++;
+    const monthly = toMonthlyAmount(price, row.billingCycle);
+
+    if (row.status === "active") {
+      activeCount++;
+      monthlySpend += monthly;
+      
+      if (row.nextBillingDate >= today && row.nextBillingDate <= in30Days) {
+        upcomingRenewals++;
+      }
+
+      if (row.hasTrial && row.trialEndDate && row.trialEndDate >= today && row.trialEndDate <= in7Days) {
+        trialsEndingSoon++;
+      }
+    } else if (row.status === "paused") {
+      savingsOpportunity += monthly;
     }
   }
 
-  const trialsEndingSoon = rows.filter(
-    (r) =>
-      r.hasTrial &&
-      r.trialEndDate &&
-      r.trialEndDate >= today &&
-      r.trialEndDate <= in7Days,
-  ).length;
-
   const yearlySpend = monthlySpend * 12;
-  const pausedRows = await db
-    .select()
-    .from(subscriptionsTable)
-    .where(and(eq(subscriptionsTable.status, "paused"), eq(subscriptionsTable.userId, userId)));
-  const savingsOpportunity = pausedRows.reduce((acc, r) => {
-    return acc + toMonthlyAmount(parseFloat(r.price as unknown as string), r.billingCycle);
-  }, 0);
 
   res.json({
     monthlySpend: Math.round(monthlySpend * 100) / 100,
-    activeCount: rows.length,
+    activeCount,
     trialsEndingSoon,
     upcomingRenewals,
     yearlySpend: Math.round(yearlySpend * 100) / 100,

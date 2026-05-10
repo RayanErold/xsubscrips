@@ -1,7 +1,5 @@
 import { Request, Response, NextFunction } from "express";
 import { supabase } from "../lib/supabase";
-import { db, usersTable } from "@workspace/db";
-import { sql } from "drizzle-orm";
 import { logger } from "../lib/logger";
 
 export interface AuthenticatedRequest extends Request {
@@ -26,6 +24,7 @@ export const requireAuth = async (
     const token = authHeader.split(" ")[1];
 
     // Verify the token with Supabase
+    // This is an external API call, but necessary for token validation
     const { data: { user }, error } = await supabase.auth.getUser(token);
 
     if (error || !user) {
@@ -37,28 +36,6 @@ export const requireAuth = async (
       id: user.id,
       email: user.email,
     };
-
-    // Sync user to our public.users table for notifications
-    if (user.email) {
-      try {
-        await db.insert(usersTable)
-          .values({
-            id: user.id,
-            email: user.email,
-            updatedAt: new Date(),
-          })
-          .onConflictDoUpdate({
-            target: usersTable.id,
-            set: { 
-              email: user.email,
-              updatedAt: new Date(),
-            }
-          });
-      } catch (dbError) {
-        // Log but don't block the request if user sync fails
-        logger.warn({ dbError }, "Failed to sync user to public users table");
-      }
-    }
 
     next();
   } catch (error) {

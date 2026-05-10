@@ -108,7 +108,7 @@ export default function Landing() {
             <span className="text-primary">Save money.</span> Stress less.
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-            The average person wastes $348 a year on forgotten subscriptions. X Subscrips shows you exactly what you're paying for — and when to cancel.
+            The average person wastes $348 a year on forgotten subscriptions. Xsubscrips shows you exactly what you're paying for — and when to cancel.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/login">
@@ -223,17 +223,15 @@ export default function Landing() {
           <div className="inline-flex items-center gap-3 bg-muted rounded-full p-1">
             <button
               onClick={() => setIsYearly(false)}
-              className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${
-                !isYearly ? "bg-background text-foreground shadow" : "text-muted-foreground"
-              }`}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${!isYearly ? "bg-background text-foreground shadow" : "text-muted-foreground"
+                }`}
             >
               Monthly
             </button>
             <button
               onClick={() => setIsYearly(true)}
-              className={`px-5 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
-                isYearly ? "bg-background text-foreground shadow" : "text-muted-foreground"
-              }`}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${isYearly ? "bg-background text-foreground shadow" : "text-muted-foreground"
+                }`}
             >
               Yearly
               <span className="text-xs bg-primary text-primary-foreground px-2 py-0.5 rounded-full">Save 37%</span>
@@ -246,45 +244,44 @@ export default function Landing() {
             const periodLabel = plan.monthly === 0 ? "forever" : "per month";
             const yearlyNote = isYearly && plan.monthly > 0 ? `$${plan.yearly * 12} billed annually` : null;
             return (
-            <div
-              key={plan.name}
-              className={`rounded-xl border p-8 ${
-                plan.highlighted
+              <div
+                key={plan.name}
+                className={`rounded-xl border p-8 ${plan.highlighted
                   ? "border-primary bg-primary/5 shadow-lg shadow-primary/10"
                   : "border-border bg-card"
-              }`}
-            >
-              {plan.highlighted && (
-                <Badge className="mb-4 bg-primary text-primary-foreground">Most Popular</Badge>
-              )}
-              <div className="mb-6">
-                <h3 className="text-xl font-bold text-foreground">{plan.name}</h3>
-                <div className="mt-2">
-                  <span className="text-4xl font-bold text-foreground">{price}</span>
-                  <span className="text-muted-foreground ml-1">/{periodLabel}</span>
-                </div>
-                {yearlyNote && (
-                  <p className="text-xs text-primary mt-1">{yearlyNote}</p>
+                  }`}
+              >
+                {plan.highlighted && (
+                  <Badge className="mb-4 bg-primary text-primary-foreground">Most Popular</Badge>
                 )}
-                <p className="text-sm text-muted-foreground mt-2">{plan.description}</p>
+                <div className="mb-6">
+                  <h3 className="text-xl font-bold text-foreground">{plan.name}</h3>
+                  <div className="mt-2">
+                    <span className="text-4xl font-bold text-foreground">{price}</span>
+                    <span className="text-muted-foreground ml-1">/{periodLabel}</span>
+                  </div>
+                  {yearlyNote && (
+                    <p className="text-xs text-primary mt-1">{yearlyNote}</p>
+                  )}
+                  <p className="text-sm text-muted-foreground mt-2">{plan.description}</p>
+                </div>
+                <ul className="space-y-3 mb-8">
+                  {plan.features.map((feature) => (
+                    <li key={feature} className="flex items-center gap-2 text-sm text-foreground">
+                      <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+                <Link href="/login">
+                  <Button
+                    className="w-full"
+                    variant={plan.highlighted ? "default" : "outline"}
+                  >
+                    {plan.cta}
+                  </Button>
+                </Link>
               </div>
-              <ul className="space-y-3 mb-8">
-                {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-center gap-2 text-sm text-foreground">
-                    <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-              <Link href="/login">
-                <Button
-                  className="w-full"
-                  variant={plan.highlighted ? "default" : "outline"}
-                >
-                  {plan.cta}
-                </Button>
-              </Link>
-            </div>
             );
           })}
         </div>

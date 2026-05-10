@@ -12,13 +12,27 @@ import Trials from "@/pages/trials";
 import Analytics from "@/pages/analytics";
 import Settings from "@/pages/settings";
 
+import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
+import { persistQueryClient } from "@tanstack/react-query-persist-client";
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 1,
-      staleTime: 30_000,
+      staleTime: 60_000, // 1 minute
+      gcTime: 1000 * 60 * 60 * 24, // 24 hours
     },
   },
+});
+
+// Configure persistence
+const persister = createSyncStoragePersister({
+  storage: window.localStorage,
+});
+
+persistQueryClient({
+  queryClient,
+  persister,
 });
 
 import Login from "@/pages/login";
