@@ -1,10 +1,11 @@
-import { useState } from "react";
-import { Bell, Moon, Sun, Monitor, Download, Trash2, User, Globe } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Bell, Moon, Sun, Monitor, Download, Trash2, User, Globe, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -15,16 +16,40 @@ import {
 import { AppLayout } from "@/components/app-layout";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
+import { useGetUserSettings, useUpdateUserSettings } from "@workspace/api-client-react";
 
 export default function Settings() {
   const { theme, setTheme } = useTheme();
-  const [notifications, setNotifications] = useState({
-    trialReminders: true,
-    renewalReminders: true,
-    weeklySummary: false,
-    emailDigest: false,
+  const { data: userSettings, isLoading } = useGetUserSettings();
+  const { mutate: updateSettings, isPending: isUpdating } = useUpdateUserSettings({
+    mutation: {
+      onSuccess: () => {
+        toast.success("Settings updated successfully");
+      },
+      onError: (error) => {
+        toast.error("Failed to update settings");
+        console.error(error);
+      }
+    }
   });
-  const [currency, setCurrency] = useState("USD");
+
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [tempName, setTempName] = useState("");
+
+  useEffect(() => {
+    if (userSettings?.fullName) {
+      setTempName(userSettings.fullName);
+    }
+  }, [userSettings]);
+
+  const handleUpdatePreference = (key: string, value: any) => {
+    updateSettings({ data: { [key]: value } });
+  };
+
+  const handleSaveName = () => {
+    updateSettings({ data: { fullName: tempName } });
+    setIsEditingName(false);
+  };
 
   const handleExport = () => {
     const link = document.createElement("a");
@@ -40,12 +65,30 @@ export default function Settings() {
     toast.error("Delete account feature coming soon");
   };
 
+  if (isLoading) {
+    return (
+      <AppLayout>
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        </div>
+      </AppLayout>
+    );
+  }
+
   return (
     <AppLayout>
       <div className="space-y-8 max-w-2xl">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Settings</h1>
-          <p className="text-muted-foreground text-sm mt-1">Manage your account and preferences</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">Settings</h1>
+            <p className="text-muted-foreground text-sm mt-1">Manage your account and preferences</p>
+          </div>
+          {isUpdating && (
+            <div className="flex items-center gap-2 text-xs text-muted-foreground animate-pulse">
+              <Loader2 className="w-3 h-3 animate-spin" />
+              Saving...
+            </div>
+          )}
         </div>
 
         {/* Account */}
@@ -58,11 +101,35 @@ export default function Settings() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between py-2">
-              <div>
+              <div className="flex-1 mr-4">
                 <p className="text-sm font-medium text-foreground">Display Name</p>
-                <p className="text-sm text-muted-foreground">user@example.com</p>
+                {isEditingName ? (
+                  <div className="flex items-center gap-2 mt-2">
+                    <Input 
+                      value={tempName} 
+                      onChange={(e) => setTempName(e.target.value)}
+                      placeholder="Enter your name"
+                      className="max-w-[240px]"
+                      autoFocus
+                    />
+                    <Button size="sm" onClick={handleSaveName}>Save</Button>
+                    <Button size="sm" variant="ghost" onClick={() => {
+                      setIsEditingName(false);
+                      setTempName(userSettings?.fullName || "");
+                    }}>Cancel</Button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col">
+                    <p className="text-sm text-foreground mt-0.5 font-semibold">
+                      {userSettings?.fullName || "Not set"}
+                    </p>
+                    <p className="text-xs text-muted-foreground">{userSettings?.email}</p>
+                  </div>
+                )}
               </div>
-              <Button variant="outline" size="sm">Edit</Button>
+              {!isEditingName && (
+                <Button variant="outline" size="sm" onClick={() => setIsEditingName(true)}>Edit</Button>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -93,10 +160,9 @@ export default function Settings() {
                   </div>
                   <Switch
                     id={item.key}
-                    checked={notifications[item.key]}
-                    onCheckedChange={(checked) =>
-                      setNotifications((prev) => ({ ...prev, [item.key]: checked }))
-                    }
+                    checked={userSettings?.[item.key] ?? false}
+                    disabled={isUpdating}
+                    onCheckedChange={(checked) => handleUpdatePreference(item.key, checked)}
                   />
                 </div>
                 {i < 3 && <Separator />}
@@ -158,7 +224,11 @@ export default function Settings() {
                 <p className="text-sm font-medium text-foreground">Default Currency</p>
                 <p className="text-xs text-muted-foreground mt-0.5">Used for displaying totals</p>
               </div>
-              <Select value={currency} onValueChange={setCurrency}>
+              <Select 
+                value={userSettings?.currency || "USD"} 
+                onValueChange={(val) => handleUpdatePreference("currency", val)}
+                disabled={isUpdating}
+              >
                 <SelectTrigger className="w-28">
                   <SelectValue />
                 </SelectTrigger>

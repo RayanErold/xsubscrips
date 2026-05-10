@@ -16,6 +16,8 @@ tags:
     description: Dashboard summaries
   - name: analytics
     description: Spending analytics
+  - name: user
+    description: User management and settings
 
 paths:
   /healthz:
@@ -217,6 +219,36 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/NotificationAlert"
+
+  /user/settings:
+    get:
+      operationId: getUserSettings
+      tags: [user]
+      summary: Get current user settings
+      responses:
+        "200":
+          description: User settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserSettings"
+    patch:
+      operationId: updateUserSettings
+      tags: [user]
+      summary: Update user settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserSettingsUpdate"
+      responses:
+        "200":
+          description: Updated user settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserSettings"
 
 components:
   schemas:
@@ -441,3 +473,58 @@ components:
         - subscriptionId
         - subscriptionName
         - severity
+
+    UserSettings:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+        fullName:
+          type: string
+          nullable: true
+        trialReminders:
+          type: boolean
+        renewalReminders:
+          type: boolean
+        weeklySummary:
+          type: boolean
+        emailDigest:
+          type: boolean
+        currency:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - email
+        - trialReminders
+        - renewalReminders
+        - weeklySummary
+        - emailDigest
+        - currency
+        - createdAt
+        - updatedAt
+
+    UserSettingsUpdate:
+      type: object
+      properties:
+        fullName:
+          type: string
+          nullable: true
+        trialReminders:
+          type: boolean
+        renewalReminders:
+          type: boolean
+        weeklySummary:
+          type: boolean
+        emailDigest:
+          type: boolean
+        currency:
+          type: string

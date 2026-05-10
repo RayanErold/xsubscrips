@@ -75,6 +75,10 @@ export async function processDailyReminders() {
       .select({
         subscription: subscriptionsTable,
         userEmail: usersTable.email,
+        userSettings: {
+          renewalReminders: usersTable.renewalReminders,
+          trialReminders: usersTable.trialReminders,
+        },
       })
       .from(subscriptionsTable)
       .leftJoin(usersTable, eq(subscriptionsTable.userId, usersTable.id))
@@ -84,21 +88,23 @@ export async function processDailyReminders() {
     let sentCount = 0;
 
     for (const item of allSubscriptions) {
-      const { subscription: sub, userEmail } = item;
-      if (!userEmail) continue;
+      const { subscription: sub, userEmail, userSettings } = item;
+      if (!userEmail || !userSettings) continue;
 
       const nextBilling = parseISO(sub.nextBillingDate);
 
       // ── Billing day: advance date + send confirmation email ────────────
       if (isSameDay(today, nextBilling)) {
         await advanceNextBillingDate(sub);
-        await sendReminderEmail(sub, userEmail, "charged");
-        sentCount++;
+        if (userSettings.renewalReminders) {
+          await sendReminderEmail(sub, userEmail, "charged");
+          sentCount++;
+        }
         continue;
       }
 
       // ── Reminder day: send warning email only ─────────────────────────
-      if (sub.reminderDaysBefore) {
+      if (sub.reminderDaysBefore && userSettings.renewalReminders) {
         const reminderDate = addDays(nextBilling, -sub.reminderDaysBefore);
         if (isSameDay(today, reminderDate)) {
           await sendReminderEmail(sub, userEmail, "upcoming");
