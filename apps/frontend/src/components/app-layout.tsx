@@ -66,8 +66,9 @@ export function AppLayout({ children }: { children: ReactNode }) {
             Logout
           </Button>
         </div>
+        
         {/* Mobile Nav */}
-        <div className="md:hidden flex overflow-x-auto px-4 py-2 border-b border-border gap-2 scrollbar-none">
+        <div className="md:hidden flex overflow-x-auto px-4 py-2 border-b border-border gap-2 scrollbar-none items-center">
           {navItems.map((item) => {
             const isActive = location === item.href || location.startsWith(item.href + "/");
             const Icon = item.icon;
@@ -84,6 +85,16 @@ export function AppLayout({ children }: { children: ReactNode }) {
               </Link>
             );
           })}
+          <div className="h-4 w-[1px] bg-border mx-1 shrink-0" />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => signOut()}
+            className="gap-2 whitespace-nowrap text-red-500 hover:text-red-600 hover:bg-red-500/10 shrink-0"
+          >
+            <LogOut className="w-4 h-4" />
+            Logout
+          </Button>
         </div>
       </aside>
       <main className="flex-1 min-w-0 flex flex-col h-screen overflow-hidden">
