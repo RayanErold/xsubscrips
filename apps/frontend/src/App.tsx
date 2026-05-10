@@ -39,13 +39,13 @@ import Login from "@/pages/login";
 import { useAuth } from "@/contexts/AuthContext";
 import { Redirect } from "wouter";
 
-import { LoadingScreen } from "@/components/loading-screen";
-
 const ProtectedRoute = ({ component: Component, ...rest }: any) => {
   const { session, loading } = useAuth();
   
   if (loading) {
-    return <LoadingScreen />;
+    // Return null to allow for a silent background check. 
+    // React Query persistence will show stale data once this component renders.
+    return null; 
   }
   
   if (!session) {
@@ -56,12 +56,6 @@ const ProtectedRoute = ({ component: Component, ...rest }: any) => {
 };
 
 function Router() {
-  const { loading } = useAuth();
-
-  if (loading) {
-    return <LoadingScreen />;
-  }
-
   return (
     <Switch>
       <Route path="/" component={Landing} />

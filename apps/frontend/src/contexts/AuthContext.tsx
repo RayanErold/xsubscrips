@@ -21,6 +21,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isInitialized, setIsInitialized] = useState(false);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -29,15 +30,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Get initial session
     const initAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { session: initialSession } } = await supabase.auth.getSession();
         if (!mounted) return;
         
-        setSession(session);
-        setUser(session?.user ?? null);
+        if (initialSession) {
+          setSession(initialSession);
+          setUser(initialSession.user);
+        }
         setLoading(false);
+        setIsInitialized(true);
       } catch (error) {
         console.error("Auth init error:", error);
-        if (mounted) setLoading(false);
+        if (mounted) {
+          setLoading(false);
+          setIsInitialized(true);
+        }
       }
     };
 
@@ -45,32 +52,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
+      (_event, currentSession) => {
         if (!mounted) return;
-        setSession(session);
-        setUser(session?.user ?? null);
+        setSession(currentSession);
+        setUser(currentSession?.user ?? null);
         setLoading(false);
+        setIsInitialized(true);
       }
     );
-
-    // Backup safety: ensure loading screen disappears after 10s regardless
-    const safetyTimer = setTimeout(() => {
-      if (mounted) setLoading(false);
-    }, 10000);
 
     return () => {
       mounted = false;
       subscription.unsubscribe();
-      clearTimeout(safetyTimer);
     };
   }, []);
 
   const signOut = async () => {
     try {
       await supabase.auth.signOut();
-      // Clear all cached queries to avoid data leakage between users
       queryClient.clear();
-      // Clear localStorage persistence if any
       localStorage.removeItem("REACT_QUERY_OFFLINE_CACHE");
       window.location.href = "/";
     } catch (error) {
@@ -79,7 +79,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading: !isInitialized, signOut }}>
       {children}
     </AuthContext.Provider>
   );
