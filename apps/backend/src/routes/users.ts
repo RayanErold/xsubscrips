@@ -34,12 +34,14 @@ router.get("/user/settings", async (req, res) => {
         })
         .returning();
 
-      // Trigger welcome email in the background
+      /* 
+      // Trigger welcome email in the background (Disabled for zero-friction launch)
       if (userEmail) {
         sendWelcomeEmail(userEmail, fullName).catch(err => 
           logger.error({ err, userId }, "Async welcome email failure")
         );
       }
+      */
     }
 
     res.json(user);

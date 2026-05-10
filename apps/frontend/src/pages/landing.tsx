@@ -67,8 +67,35 @@ const stats = [
   { value: "3 mins", label: "Time to set up" },
 ];
 
+import { useABTest } from "@/hooks/useABTest";
+
 export default function Landing() {
   const [isYearly, setIsYearly] = useState(false);
+  const variant = useABTest("hero_v2");
+
+  const content = {
+    A: {
+      headline: (
+        <>
+          Manage subscriptions.<br />
+          <span className="text-primary">Save money.</span> Stress less.
+        </>
+      ),
+      subheadline: "The average person wastes $348 a year on forgotten subscriptions. Xsubscrips shows you exactly what you're paying for — and when to cancel.",
+      cta: "Get Started Free"
+    },
+    B: {
+      headline: (
+        <>
+          Stop losing money.<br />
+          <span className="text-primary">Cancel hidden costs</span> in seconds.
+        </>
+      ),
+      subheadline: "Xsubscrips scans your monthly recurring costs and alerts you before you get charged. Take back control of your bank account today.",
+      cta: "Start Saving Now"
+    }
+  }[variant];
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Nav */}
@@ -104,16 +131,15 @@ export default function Landing() {
             Free to use — no credit card required
           </Badge>
           <h1 className="text-5xl md:text-6xl font-bold tracking-tight text-foreground leading-tight mb-6">
-            Manage subscriptions.<br />
-            <span className="text-primary">Save money.</span> Stress less.
+            {content.headline}
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-            The average person wastes $348 a year on forgotten subscriptions. Xsubscrips shows you exactly what you're paying for — and when to cancel.
+            {content.subheadline}
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/login">
               <Button size="lg" className="gap-2 text-base px-8">
-                Get Started Free <ArrowRight className="w-4 h-4" />
+                {content.cta} <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
             <Link href="/login">
