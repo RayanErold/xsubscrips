@@ -79,7 +79,7 @@ export default function Landing() {
               <span className="text-background text-base font-bold italic tracking-tighter">X</span>
             </div>
             <span className="text-xl font-bold tracking-tight text-foreground">
-              X Subscription
+              X Subscrips
             </span>
           </div>
           <div className="flex items-center gap-3">
@@ -108,7 +108,7 @@ export default function Landing() {
             <span className="text-primary">Save money.</span> Stress less.
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-            The average person wastes $348 a year on forgotten subscriptions. X Subscription shows you exactly what you're paying for — and when to cancel.
+            The average person wastes $348 a year on forgotten subscriptions. X Subscrips shows you exactly what you're paying for — and when to cancel.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/login">
@@ -320,7 +320,7 @@ export default function Landing() {
             <div className="w-6 h-6 bg-foreground rounded flex items-center justify-center">
               <span className="text-background text-xs font-bold italic tracking-tighter">X</span>
             </div>
-            X Subscription
+            X Subscrips
           </div>
           <p className="text-sm text-muted-foreground">
             Built to help you spend smarter.

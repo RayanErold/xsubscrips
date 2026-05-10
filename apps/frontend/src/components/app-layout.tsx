@@ -19,7 +19,7 @@ function XSubscriptionLogo() {
       <div className="w-9 h-9 bg-foreground rounded-lg flex items-center justify-center transition-transform group-hover:scale-105 shadow-sm">
         <span className="text-background text-xl font-bold italic tracking-tighter">X</span>
       </div>
-      <span className="font-bold text-lg tracking-tight text-foreground">X Subscription</span>
+      <span className="font-bold text-lg tracking-tight text-foreground">X Subscrips</span>
     </div>
   );
 }
