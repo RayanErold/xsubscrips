@@ -5,23 +5,35 @@ import { logger } from "../lib/logger";
 
 const router = Router();
 
-// Get current user settings
+// Get current user settings (Find or Create)
 router.get("/user/settings", async (req, res) => {
   const userId = (req as any).user.id;
+  const userEmail = (req as any).user.email;
 
   try {
-    const [user] = await db
+    let [user] = await db
       .select()
       .from(usersTable)
       .where(eq(usersTable.id, userId));
 
+    // If user doesn't exist in our DB yet, create them
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      logger.info({ userId, userEmail }, "New user detected, creating database record");
+      [user] = await db
+        .insert(usersTable)
+        .values({
+          id: userId,
+          email: userEmail || "",
+          fullName: userEmail ? userEmail.split("@")[0] : "New User",
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .returning();
     }
 
     res.json(user);
   } catch (error) {
-    logger.error({ error, userId }, "Failed to fetch user settings");
+    logger.error({ error, userId }, "Failed to fetch or create user settings");
     res.status(500).json({ error: "Internal server error" });
   }
 });
