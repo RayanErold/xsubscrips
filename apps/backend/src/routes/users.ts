@@ -2,6 +2,7 @@ import { Router } from "express";
 import { db, usersTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 import { logger } from "../lib/logger";
+import { sendWelcomeEmail } from "../lib/email";
 
 const router = Router();
 
@@ -19,16 +20,26 @@ router.get("/user/settings", async (req, res) => {
     // If user doesn't exist in our DB yet, create them
     if (!user) {
       logger.info({ userId, userEmail }, "New user detected, creating database record");
+      
+      const fullName = userEmail ? userEmail.split("@")[0] : "New User";
+      
       [user] = await db
         .insert(usersTable)
         .values({
           id: userId,
           email: userEmail || "",
-          fullName: userEmail ? userEmail.split("@")[0] : "New User",
+          fullName,
           createdAt: new Date(),
           updatedAt: new Date(),
         })
         .returning();
+
+      // Trigger welcome email in the background
+      if (userEmail) {
+        sendWelcomeEmail(userEmail, fullName).catch(err => 
+          logger.error({ err, userId }, "Async welcome email failure")
+        );
+      }
     }
 
     res.json(user);

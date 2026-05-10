@@ -19,61 +19,56 @@ export default function Login() {
 
   const [isSignUp, setIsSignUp] = useState(false);
 
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpCode, setOtpCode] = useState("");
+
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Attempting email auth...", { email, isSignUp });
     setLoading(true);
 
-    if (isSignUp) {
-      const { data, error } = await supabase.auth.signUp({
+    if (otpSent) {
+      // Verify OTP
+      const { error } = await supabase.auth.verifyOtp({
         email,
-        password,
-        options: {
-          data: {
-            first_name: firstName,
-            last_name: lastName,
-          }
-        }
+        token: otpCode,
+        type: 'email',
       });
 
       if (error) {
         toast({
-          title: "Sign up failed",
-          description: error.message,
-          variant: "destructive",
-        });
-      } else {
-        if (data.session) {
-          toast({
-            title: "Welcome!",
-            description: "Your account has been created.",
-          });
-          setLocation("/dashboard");
-        } else {
-          toast({
-            title: "Check your email",
-            description: "We sent you a confirmation link to complete your sign up.",
-          });
-        }
-      }
-    } else {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        toast({
-          title: "Login failed",
+          title: "Verification failed",
           description: error.message,
           variant: "destructive",
         });
       } else {
         toast({
-          title: "Welcome back!",
-          description: "Successfully logged in.",
+          title: "Success!",
+          description: "You are now logged in.",
         });
         setLocation("/dashboard");
+      }
+    } else {
+      // Send OTP
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          shouldCreateUser: true,
+          emailRedirectTo: `${window.location.origin}/dashboard`,
+        },
+      });
+
+      if (error) {
+        toast({
+          title: "Failed to send code",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        setOtpSent(true);
+        toast({
+          title: "Code sent!",
+          description: "Check your email for your 6-digit login code.",
+        });
       }
     }
     setLoading(false);
@@ -147,97 +142,67 @@ export default function Login() {
         </div>
 
         <form onSubmit={handleEmailAuth} className="space-y-5">
-          {isSignUp && (
-            <div className="flex gap-4">
-              <div className="space-y-2 flex-1">
-                <Label htmlFor="firstName">First Name</Label>
+          {!otpSent ? (
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <div className="relative">
+                <Mail className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <Input
-                  id="firstName"
-                  type="text"
-                  placeholder="John"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  className="bg-white/50 dark:bg-black/50 border-white/20 h-12 rounded-xl focus:ring-primary focus:border-primary"
-                  required={isSignUp}
+                  id="email"
+                  type="email"
+                  placeholder="name@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="pl-10 bg-white/50 dark:bg-black/50 border-white/20 h-12 rounded-xl focus:ring-primary focus:border-primary"
+                  required
                 />
               </div>
-              <div className="space-y-2 flex-1">
-                <Label htmlFor="lastName">Last Name</Label>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground mb-4">
+                  We've sent a 6-digit code to <span className="text-foreground font-medium">{email}</span>
+                </p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="otpCode">Verification Code</Label>
                 <Input
-                  id="lastName"
+                  id="otpCode"
                   type="text"
-                  placeholder="Doe"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  className="bg-white/50 dark:bg-black/50 border-white/20 h-12 rounded-xl focus:ring-primary focus:border-primary"
-                  required={isSignUp}
+                  placeholder="000000"
+                  maxLength={6}
+                  value={otpCode}
+                  onChange={(e) => setOtpCode(e.target.value)}
+                  className="text-center tracking-[1em] font-mono text-xl bg-white/50 dark:bg-black/50 border-white/20 h-14 rounded-xl focus:ring-primary focus:border-primary"
+                  required
+                  autoFocus
                 />
               </div>
+              <Button
+                type="button"
+                variant="link"
+                onClick={() => setOtpSent(false)}
+                className="w-full text-xs text-muted-foreground hover:text-primary"
+              >
+                Use a different email
+              </Button>
             </div>
           )}
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <div className="relative">
-              <Mail className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                id="email"
-                type="email"
-                placeholder="name@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="pl-10 bg-white/50 dark:bg-black/50 border-white/20 h-12 rounded-xl focus:ring-primary focus:border-primary"
-                required
-              />
-            </div>
-          </div>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="password">Password</Label>
-              {!isSignUp && (
-                <a href="#" className="text-sm text-primary hover:underline font-medium">
-                  Forgot password?
-                </a>
-              )}
-            </div>
-            <div className="relative">
-              <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="bg-white/50 dark:bg-black/50 border-white/20 h-12 rounded-xl focus:ring-primary focus:border-primary pr-10"
-                required
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors focus:outline-none"
-              >
-                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-              </button>
-            </div>
-          </div>
+          
           <Button
             type="submit"
             className="w-full h-12 rounded-xl bg-gradient-to-r from-primary to-purple-500 hover:from-primary/90 hover:to-purple-500/90 text-white font-medium shadow-lg shadow-primary/25 transition-all active:scale-[0.98]"
             disabled={loading}
           >
             {loading 
-              ? (isSignUp ? "Creating account..." : "Signing in...") 
-              : (isSignUp ? "Create Account" : "Sign in")}
+              ? (otpSent ? "Verifying..." : "Sending code...") 
+              : (otpSent ? "Verify & Login" : "Send Login Code")}
           </Button>
         </form>
 
         <p className="text-center mt-8 text-sm text-muted-foreground">
-          {isSignUp ? "Already have an account?" : "Don't have an account?"}{" "}
-          <button 
-            type="button"
-            onClick={() => setIsSignUp(!isSignUp)}
-            className="text-primary font-medium hover:underline"
-          >
-            {isSignUp ? "Sign in" : "Sign up"}
-          </button>
+          Secure, passwordless login with X Subscrips
         </p>
       </div>
     </div>

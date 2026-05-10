@@ -15,6 +15,8 @@ import Settings from "@/pages/settings";
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 import { persistQueryClient } from "@tanstack/react-query-persist-client";
 
+import { CookieConsent } from "@/components/CookieConsent";
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -82,6 +84,7 @@ function App() {
               <Router />
             </WouterRouter>
             <Toaster />
+            <CookieConsent />
             <Sonner richColors position="top-right" />
           </TooltipProvider>
         </AuthProvider>
