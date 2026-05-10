@@ -31,6 +31,33 @@ Asset-Manager/
 
 ---
 
+## 🛠️ The Tech Stack
+
+X Subscrips is built with a modern, high-performance stack optimized for scalability, security, and developer experience.
+
+### Frontend
+- **Framework:** [React 18](https://reactjs.org/) with [TypeScript](https://www.typescriptlang.org/)
+- **Build Tool:** [Vite](https://vitejs.dev/)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **UI Components:** [Radix UI](https://www.radix-ui.com/) & [Shadcn UI](https://ui.shadcn.com/)
+- **Animations:** [Framer Motion](https://www.framer.com/motion/)
+- **State Management:** [TanStack Query v5](https://tanstack.com/query/latest) (React Query)
+- **Routing:** [Wouter](https://github.com/molefrog/wouter)
+
+### Backend
+- **Runtime:** [Node.js](https://nodejs.org/)
+- **Framework:** [Express.js](https://expressjs.com/)
+- **Validation:** [Zod](https://zod.dev/)
+- **Logging:** [Winston](https://github.com/winstonjs/winston)
+
+### Database & Infrastructure
+- **Database:** [PostgreSQL](https://www.postgresql.org/) via [Supabase](https://supabase.com/)
+- **ORM:** [Drizzle ORM](https://orm.drizzle.team/)
+- **Authentication:** [Supabase Auth](https://supabase.com/auth)
+- **Email:** [Resend](https://resend.com/) (Integrated)
+
+---
+
 ## 🔐 Security & Authentication
 
 The platform utilizes **Supabase** for secure, enterprise-grade authentication and data storage.
