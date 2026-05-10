@@ -108,28 +108,33 @@ export default function Settings() {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between py-2">
               <div className="flex-1 mr-4">
-                <p className="text-sm font-medium text-foreground">Display Name</p>
                 {isEditingName ? (
-                  <div className="flex items-center gap-2 mt-2">
-                    <Input 
-                      value={tempName} 
-                      onChange={(e) => setTempName(e.target.value)}
-                      placeholder="Enter your name"
-                      className="max-w-[240px]"
-                      autoFocus
-                    />
-                    <Button size="sm" onClick={handleSaveName}>Save</Button>
-                    <Button size="sm" variant="ghost" onClick={() => {
-                      setIsEditingName(false);
-                      setTempName(userSettings?.fullName || "");
-                    }}>Cancel</Button>
+                  <div className="space-y-2 mt-1">
+                    <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Display Name</Label>
+                    <div className="flex items-center gap-2">
+                      <Input 
+                        value={tempName} 
+                        onChange={(e) => setTempName(e.target.value)}
+                        placeholder="Enter your name"
+                        className="max-w-[240px]"
+                        autoFocus
+                      />
+                      <Button size="sm" onClick={handleSaveName}>Save</Button>
+                      <Button size="sm" variant="ghost" onClick={() => {
+                        setIsEditingName(false);
+                        setTempName(userSettings?.fullName || "");
+                      }}>Cancel</Button>
+                    </div>
                   </div>
                 ) : (
                   <div className="flex flex-col">
-                    <p className="text-sm text-foreground mt-0.5 font-semibold">
-                      {userSettings?.fullName || "Not set"}
+                    {!userSettings?.fullName && (
+                      <p className="text-sm font-medium text-foreground mb-1">Display Name</p>
+                    )}
+                    <p className={`text-foreground ${userSettings?.fullName ? "text-lg font-bold" : "text-sm italic text-muted-foreground"}`}>
+                      {userSettings?.fullName || "Name not set"}
                     </p>
-                    <p className="text-xs text-muted-foreground">{userSettings?.email}</p>
+                    <p className="text-sm text-muted-foreground">{userSettings?.email}</p>
                   </div>
                 )}
               </div>
