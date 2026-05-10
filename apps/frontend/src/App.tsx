@@ -39,11 +39,13 @@ import Login from "@/pages/login";
 import { useAuth } from "@/contexts/AuthContext";
 import { Redirect } from "wouter";
 
+import { LoadingScreen } from "@/components/loading-screen";
+
 const ProtectedRoute = ({ component: Component, ...rest }: any) => {
   const { session, loading } = useAuth();
   
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return <LoadingScreen />;
   }
   
   if (!session) {
@@ -54,6 +56,12 @@ const ProtectedRoute = ({ component: Component, ...rest }: any) => {
 };
 
 function Router() {
+  const { loading } = useAuth();
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
+
   return (
     <Switch>
       <Route path="/" component={Landing} />
