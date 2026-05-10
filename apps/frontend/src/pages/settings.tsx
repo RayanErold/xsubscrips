@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { Link } from "wouter";
+import { useQueryClient } from "@tanstack/react-query";
 import { Bell, Moon, Sun, Monitor, Download, Trash2, User, Globe, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -20,11 +22,13 @@ import { useGetUserSettings, useUpdateUserSettings } from "@workspace/api-client
 
 export default function Settings() {
   const { theme, setTheme } = useTheme();
+  const queryClient = useQueryClient();
   const { data: userSettings, isLoading } = useGetUserSettings();
   const { mutate: updateSettings, isPending: isUpdating } = useUpdateUserSettings({
     mutation: {
       onSuccess: (data) => {
         console.log("Settings updated successfully:", data);
+        queryClient.invalidateQueries({ queryKey: ["/api/user/settings"] });
         toast.success("Settings updated successfully");
       },
       onError: (error) => {
