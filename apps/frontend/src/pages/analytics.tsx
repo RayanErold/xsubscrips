@@ -101,45 +101,49 @@ export default function Analytics() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {topLoading ? (
+                {catLoading ? (
                   <Skeleton className="h-64 w-full" />
-                ) : topSubs && topSubs.length > 0 ? (
+                ) : categoryData && categoryData.length > 0 ? (
                   <div className="flex flex-col gap-4">
                     <ResponsiveContainer width="100%" height={220}>
                       <PieChart>
                         <Pie
-                          data={topSubs.map(s => ({
-                            ...s,
-                            monthlyAmount: toMonthly(s.price, s.billingCycle)
-                          }))}
+                          data={categoryData}
                           dataKey="monthlyAmount"
-                          nameKey="name"
+                          nameKey="category"
                           cx="50%"
                           cy="50%"
                           outerRadius={80}
                           innerRadius={45}
                           paddingAngle={2}
                         >
-                          {topSubs.map((_, idx) => (
+                          {categoryData.map((_, idx) => (
                             <Cell key={idx} fill={CHART_COLORS[idx % CHART_COLORS.length]} />
                           ))}
                         </Pie>
                         <Tooltip
                           formatter={(value: number) => [`$${(value ?? 0).toFixed(2)}/mo`, "Spend"]}
+                          contentStyle={{
+                            background: "hsl(var(--card))",
+                            border: "1px solid hsl(var(--border))",
+                            borderRadius: "8px",
+                            fontSize: "12px",
+                          }}
                         />
                       </PieChart>
                     </ResponsiveContainer>
                     <div className="space-y-2 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
-                      {topSubs.map((item, idx) => (
-                        <div key={item.id} className="flex items-center justify-between text-sm">
+                      {categoryData.map((item, idx) => (
+                        <div key={item.category} className="flex items-center justify-between text-sm">
                           <div className="flex items-center gap-2">
                             <div
                               className="w-3 h-3 rounded-full shrink-0"
                               style={{ backgroundColor: CHART_COLORS[idx % CHART_COLORS.length] }}
                             />
-                            <span className="text-foreground truncate max-w-[120px]">{item.name}</span>
+                            <span className="text-foreground capitalize">{item.category}</span>
+                            <span className="text-xs text-muted-foreground">({item.count})</span>
                           </div>
-                          <span className="font-medium text-foreground">${(toMonthly(item.price, item.billingCycle) ?? 0).toFixed(2)}/mo</span>
+                          <span className="font-medium text-foreground">${(item.monthlyAmount ?? 0).toFixed(2)}/mo</span>
                         </div>
                       ))}
                     </div>
@@ -208,33 +212,32 @@ export default function Analytics() {
           </motion.div>
         </div>
 
-        {/* Top Subscriptions */}
+        {/* Top Categories */}
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-base font-semibold flex items-center gap-2">
                 <BarChart2 className="w-4 h-4 text-primary" />
-                Top Subscriptions by Cost
+                Top Categories by Cost
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {topLoading ? (
+              {catLoading ? (
                 <div className="space-y-3">
                   {[1, 2, 3].map((i) => <Skeleton key={i} className="h-10 w-full" />)}
                 </div>
-              ) : topSubs && topSubs.length > 0 ? (
+              ) : categoryData && categoryData.length > 0 ? (
                 <div className="space-y-2">
-                  {topSubs.slice(0, 8).map((sub, i) => {
-                    const monthly = toMonthly(sub.price, sub.billingCycle);
-                    const maxMonthly = toMonthly(topSubs[0].price, topSubs[0].billingCycle);
-                    const pct = (monthly / maxMonthly) * 100;
+                  {categoryData.slice(0, 8).map((item, i) => {
+                    const maxAmount = categoryData[0].monthlyAmount;
+                    const pct = (item.monthlyAmount / maxAmount) * 100;
                     return (
-                      <div key={sub.id} className="flex items-center gap-4">
+                      <div key={item.category} className="flex items-center gap-4">
                         <span className="text-xs text-muted-foreground w-4 text-right">{i + 1}</span>
                         <div className="flex-1 min-w-0">
                           <div className="flex justify-between text-sm mb-1">
-                            <span className="font-medium text-foreground truncate">{sub.name}</span>
-                            <span className="text-muted-foreground ml-4">${(monthly ?? 0).toFixed(2)}/mo</span>
+                            <span className="font-medium text-foreground capitalize">{item.category}</span>
+                            <span className="text-muted-foreground ml-4">${(item.monthlyAmount ?? 0).toFixed(2)}/mo</span>
                           </div>
                           <div className="h-1.5 rounded-full bg-muted overflow-hidden">
                             <div
@@ -252,7 +255,7 @@ export default function Analytics() {
                 </div>
               ) : (
                 <div className="py-8 text-center text-muted-foreground text-sm">
-                  No subscriptions tracked yet
+                  No data yet
                 </div>
               )}
             </CardContent>

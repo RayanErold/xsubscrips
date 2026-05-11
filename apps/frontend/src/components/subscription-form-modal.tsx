@@ -35,7 +35,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { subscriptionFormSchema, type SubscriptionFormValues, CATEGORIES, CURRENCIES, BILLING_CYCLES } from "@/lib/constants";
 import type { Subscription } from "@workspace/api-client-react";
 import { format } from "date-fns";
-import { Sparkles, Upload, Loader2 } from "lucide-react";
+import { Sparkles, Upload, Loader2, Clipboard } from "lucide-react";
 import { useState, useRef } from "react";
 import { supabase } from "@/lib/supabaseClient";
 
@@ -152,10 +152,7 @@ export function SubscriptionFormModal({ open, onOpenChange, subscription }: Prop
     },
   });
 
-  const handleSmartScan = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
+  const processImage = async (file: File) => {
     setIsScanning(true);
     try {
       const formData = new FormData();
@@ -196,6 +193,57 @@ export function SubscriptionFormModal({ open, onOpenChange, subscription }: Prop
     }
   };
 
+  const handleSmartScan = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      processImage(file);
+    }
+  };
+
+  useEffect(() => {
+    const handlePaste = (e: ClipboardEvent) => {
+      if (!open || isEdit || isScanning) return;
+      
+      const items = e.clipboardData?.items;
+      if (!items) return;
+
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf("image") !== -1) {
+          const file = items[i].getAsFile();
+          if (file) {
+            processImage(file);
+          }
+          break;
+        }
+      }
+    };
+
+    window.addEventListener("paste", handlePaste);
+    return () => window.removeEventListener("paste", handlePaste);
+  }, [open, isEdit, isScanning]);
+
+  const handleClipboardPaste = async () => {
+    if (isScanning) return;
+    
+    try {
+      const items = await navigator.clipboard.read();
+      for (const item of items) {
+        for (const type of item.types) {
+          if (type.startsWith("image/")) {
+            const blob = await item.getType(type);
+            const file = new File([blob], "pasted-image.png", { type });
+            processImage(file);
+            return;
+          }
+        }
+      }
+      alert("No image found in clipboard. Please copy a screenshot first.");
+    } catch (error) {
+      console.error("Clipboard Error:", error);
+      alert("Failed to read clipboard. Please make sure you've granted permission and have an image copied.");
+    }
+  };
+
   const onSubmit = async (data: SubscriptionFormValues) => {
     const payload = {
       ...data,
@@ -228,27 +276,34 @@ export function SubscriptionFormModal({ open, onOpenChange, subscription }: Prop
                 <span>Smart Add with AI</span>
               </div>
               <p className="text-xs text-muted-foreground">
-                Upload a screenshot of your receipt or invoice to automatically fill the form.
+                Upload or <span className="font-medium text-primary">paste</span> a screenshot of your receipt to automatically fill the form.
               </p>
-              <Button 
-                type="button" 
-                variant="outline" 
-                className="w-full gap-2 border-primary/30 hover:bg-primary/10"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={isScanning}
-              >
-                {isScanning ? (
-                  <>
+              <div className="grid grid-cols-2 gap-3">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  className="gap-2 border-primary/30 hover:bg-primary/10"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isScanning}
+                >
+                  {isScanning ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    Analyzing receipt...
-                  </>
-                ) : (
-                  <>
+                  ) : (
                     <Upload className="w-4 h-4" />
-                    Upload Image
-                  </>
-                )}
-              </Button>
+                  )}
+                  Upload
+                </Button>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  className="gap-2 border-primary/30 hover:bg-primary/10"
+                  onClick={handleClipboardPaste}
+                  disabled={isScanning}
+                >
+                  <Clipboard className="w-4 h-4" />
+                  Paste
+                </Button>
+              </div>
               <input 
                 type="file" 
                 ref={fileInputRef} 
