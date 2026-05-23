@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   ArrowRight, BarChart2, Bell, CreditCard, Shield, TrendingDown, 
   CheckCircle2, Zap, Clock, Play, Pause, RotateCcw, Sparkles, 
-  UploadCloud, Laptop, Smartphone, Check, Eye
+  UploadCloud, Laptop, Smartphone, Check, Eye, LayoutDashboard, List, Plus
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -295,232 +295,343 @@ export default function Landing() {
             </div>
 
             {/* Stage Right Screen Simulation */}
-            <div className="md:col-span-8 bg-[#1E112A] p-8 flex items-center justify-center relative overflow-hidden">
-              
-              {/* Decorative grid pattern in background */}
-              <div className="absolute inset-0 bg-[linear-gradient(to_right,#311846_1px,transparent_1px),linear-gradient(to_bottom,#311846_1px,transparent_1px)] bg-[size:24px_24px] opacity-20" />
+            <div className="md:col-span-8 bg-[#FAF7FF] p-4 flex items-center justify-center relative overflow-hidden min-h-[440px] border-b md:border-b-0 border-[#EBDDFF]">
               
               {/* Purple glowing bubble inside canvas */}
-              <div className="absolute -top-12 -right-12 w-64 h-64 bg-[#7C3AED] opacity-20 rounded-full blur-[80px]" />
-              <div className="absolute -bottom-16 -left-16 w-64 h-64 bg-[#C084FC] opacity-20 rounded-full blur-[80px]" />
+              <div className="absolute -top-12 -right-12 w-64 h-64 bg-[#7C3AED] opacity-[0.07] rounded-full blur-[80px] pointer-events-none" />
+              <div className="absolute -bottom-16 -left-16 w-64 h-64 bg-[#C084FC] opacity-[0.05] rounded-full blur-[80px] pointer-events-none" />
 
-              <AnimatePresence mode="wait">
-                {activeStep === 0 && (
-                  <motion.div
-                    key="step-scanner"
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.4 }}
-                    className="w-full max-w-sm bg-white rounded-2xl p-6 shadow-2xl relative border border-[#EBDDFF] text-[#1D1030] overflow-hidden"
-                  >
-                    {/* Gemini AI Scan Overlay banner */}
-                    <div className="absolute top-2 right-2 bg-gradient-to-r from-[#7C3AED] to-[#9333EA] text-white text-[9px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
-                      <Sparkles className="w-2.5 h-2.5" /> Gemini AI Powered
+              <div className="w-full h-full bg-white rounded-xl border border-[#EBDDFF] shadow-2xl flex flex-col text-left overflow-hidden select-none relative z-10 min-h-[380px]">
+                {/* Mock App Window Header Bar */}
+                <div className="bg-[#FDFBFF] border-b border-[#EBDDFF] px-3 py-2 flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-5 h-5 bg-gradient-to-br from-[#7C3AED] to-[#C084FC] rounded flex items-center justify-center shadow-sm shadow-[#7C3AED]/20">
+                      <span className="text-white text-[10px] font-black italic tracking-tighter">X</span>
                     </div>
+                    <span className="font-extrabold text-[10px] bg-gradient-to-r from-[#5B21B6] to-[#7C3AED] bg-clip-text text-transparent">Xsubscrips Client</span>
+                  </div>
+                  
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-20 h-4 rounded bg-[#F5EEFF] border border-[#EBDDFF] px-1 flex items-center justify-between text-[6px] text-[#6B5A84]">
+                      <span>Search...</span>
+                      <kbd className="text-[5px] bg-white px-0.5 rounded border border-[#EBDDFF]">⌘K</kbd>
+                    </div>
+                    <div className="w-4 h-4 rounded-full bg-[#7C3AED]/10 text-[#7C3AED] font-bold text-[7px] flex items-center justify-center border border-[#7C3AED]/20">JD</div>
+                  </div>
+                </div>
 
-                    <h3 className="font-bold text-sm mb-4 text-[#5B21B6] flex items-center gap-1.5">
-                      <UploadCloud className="w-4 h-4" /> AI Invoice & Receipt Scan
-                    </h3>
+                {/* Mock App Window Body with Sidebar + Main Content Grid */}
+                <div className="flex-1 flex min-h-[300px]">
+                  {/* Miniature Left Sidebar */}
+                  <div className="w-20 border-r border-[#EBDDFF] bg-[#FAF7FF]/50 p-1.5 space-y-0.5 shrink-0 hidden sm:block">
+                    {[
+                      { label: "Dashboard", icon: LayoutDashboard, active: true },
+                      { label: "Subscriptions", icon: List, active: false },
+                      { label: "Trials Monitor", icon: Clock, active: false },
+                      { label: "Cost Analytics", icon: BarChart2, active: false },
+                    ].map((item, index) => {
+                      const Icon = item.icon;
+                      return (
+                        <div key={index} className={`flex items-center gap-1 px-1.5 py-1 rounded text-[7px] font-extrabold transition-all ${item.active ? "bg-[#7C3AED]/10 text-[#7C3AED]" : "text-[#6B5A84]"}`}>
+                          <Icon className="w-2.5 h-2.5" />
+                          <span>{item.label}</span>
+                        </div>
+                      )
+                    })}
+                  </div>
 
-                    {/* Simulation drag and drop container */}
-                    <div className="border-2 border-dashed border-[#EBDDFF] rounded-xl p-6 bg-[#FAF7FF] text-center relative overflow-hidden flex flex-col items-center justify-center min-h-[160px]">
+                  {/* Miniature Main Content Area */}
+                  <div className="flex-1 p-3.5 space-y-3 relative overflow-hidden flex flex-col justify-between">
+                    
+                    {/* Dashboard Title & Top Actions Bar */}
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="text-[10px] font-black text-[#1D1030] leading-none">Dashboard Overview</h4>
+                        <p className="text-[6px] text-[#6B5A84] mt-0.5">Automated command center</p>
+                      </div>
                       
-                      {currentTime < 6 ? (
-                        <>
-                          <UploadCloud className="w-8 h-8 text-[#7C3AED] mb-2 animate-bounce" />
-                          <p className="text-xs font-semibold">Drop Subscription Invoice Here</p>
-                          <p className="text-[10px] text-[#6B5A84] mt-1">Accepts PDF, JPG, PNG receipts</p>
-                        </>
-                      ) : currentTime < 11 ? (
-                        <div className="w-full relative flex flex-col items-center">
-                          {/* Simulated invoice document */}
-                          <div className="w-24 h-32 bg-white border border-[#EBDDFF] shadow-sm rounded p-2 text-left text-[6px] space-y-1 relative">
-                            <div className="w-8 h-2 bg-[#7C3AED]/20 rounded" />
-                            <div className="w-16 h-1 bg-[#6B5A84]/20 rounded" />
-                            <hr className="border-[#EBDDFF]" />
-                            <div className="flex justify-between font-bold text-[7px] text-[#1D1030] pt-2">
-                              <span>NETFLIX PREMIUM</span>
-                              <span>$15.49</span>
-                            </div>
-                            <div className="w-10 h-1 bg-[#6B5A84]/20 rounded" />
-                            {/* Scanning moving laser */}
-                            <motion.div 
-                              animate={{ y: [0, 110, 0] }}
-                              transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-                              className="absolute left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#9333EA] to-transparent shadow-[0_0_8px_#9333EA] z-10"
-                            />
-                          </div>
-                          <p className="text-[10px] font-bold text-[#7C3AED] mt-4 animate-pulse">Scanning with Google Gemini...</p>
-                        </div>
-                      ) : (
-                        <motion.div 
-                          initial={{ scale: 0.9, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 1 }}
-                          className="w-full space-y-2 text-left"
-                        >
-                          <div className="bg-[#F5EEFF] p-2.5 rounded-lg border border-[#EBDDFF] flex items-center justify-between text-xs">
-                            <span className="text-[#6B5A84]">Sub Name:</span>
-                            <span className="font-bold text-[#5B21B6] flex items-center gap-1"><Check className="w-3.5 h-3.5 text-green-500" /> Netflix</span>
-                          </div>
-                          <div className="bg-[#F5EEFF] p-2.5 rounded-lg border border-[#EBDDFF] flex items-center justify-between text-xs">
-                            <span className="text-[#6B5A84]">Amount:</span>
-                            <span className="font-bold text-[#5B21B6]">$15.49 / Month</span>
-                          </div>
-                          <div className="bg-[#F5EEFF] p-2.5 rounded-lg border border-[#EBDDFF] flex items-center justify-between text-xs">
-                            <span className="text-[#6B5A84]">Renewal:</span>
-                            <span className="font-bold text-[#5B21B6]">June 25, 2026</span>
-                          </div>
-                          <div className="text-[9px] text-green-600 font-bold bg-green-50 px-2 py-1 rounded text-center border border-green-200">
-                            🎉 Extracted with 99.8% Accuracy! Saved to Dashboard.
-                          </div>
-                        </motion.div>
-                      )}
-                    </div>
-                  </motion.div>
-                )}
-
-                {activeStep === 1 && (
-                  <motion.div
-                    key="step-dashboard"
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.4 }}
-                    className="w-full max-w-md bg-white rounded-2xl p-5 shadow-2xl relative border border-[#EBDDFF] text-[#1D1030]"
-                  >
-                    <div className="flex items-center justify-between mb-4 border-b border-[#EBDDFF] pb-2">
-                      <div className="flex items-center gap-1.5">
-                        <div className="w-5 h-5 bg-[#7C3AED] text-white rounded-md text-[10px] font-bold flex items-center justify-center">X</div>
-                        <span className="font-extrabold text-xs text-[#5B21B6]">Fintech Spending Vault</span>
-                      </div>
-                      <Badge className="bg-green-100 text-green-800 text-[9px] font-semibold border-none">Active Monitor</Badge>
+                      {/* "+ Add Subscription" button which is CLICKED during Step 1 */}
+                      <motion.button 
+                        animate={activeStep === 0 && currentTime < 4 ? { scale: [1, 1.04, 1] } : {}}
+                        transition={{ repeat: Infinity, duration: 1.5 }}
+                        className={`flex items-center gap-0.5 bg-[#7C3AED] text-white text-[7px] font-bold px-1.5 py-0.5 rounded shadow-sm hover:bg-[#6D28D9] ${activeStep === 0 && currentTime < 4 ? "ring-2 ring-[#7C3AED]/20" : ""}`}
+                      >
+                        <Plus className="w-2 h-2" />
+                        <span>Add Subscription</span>
+                      </motion.button>
                     </div>
 
-                    {/* Analytics Simulation */}
-                    <div className="grid grid-cols-2 gap-3 mb-4">
-                      <div className="bg-[#FAF7FF] p-3 rounded-xl border border-[#EBDDFF]">
-                        <p className="text-[10px] text-[#6B5A84] font-medium">Monthly Cost</p>
-                        <p className="text-xl font-bold text-[#7C3AED] transition-all duration-500">
-                          {currentTime < 22 ? "$42.50" : "$57.99"}
-                        </p>
-                        <span className="text-[8px] text-red-500">+{currentTime < 22 ? "0" : "$15.49"} added</span>
-                      </div>
-                      <div className="bg-[#FAF7FF] p-3 rounded-xl border border-[#EBDDFF]">
-                        <p className="text-[10px] text-[#6B5A84] font-medium">Active Count</p>
-                        <p className="text-xl font-bold text-[#1D1030]">
-                          {currentTime < 22 ? "3 accounts" : "4 accounts"}
-                        </p>
-                        <span className="text-[8px] text-green-600 font-semibold">AI Scanner Synced</span>
-                      </div>
-                    </div>
-
-                    {/* Subscription interactive list */}
-                    <div className="space-y-2">
-                      <p className="text-[10px] font-bold text-[#6B5A84] uppercase tracking-wider">Subscribed Services</p>
-                      
-                      <div className="space-y-1.5 max-h-[140px] overflow-y-auto">
-                        <div className="flex items-center justify-between p-2 bg-[#FAF7FF] rounded-lg border border-[#EBDDFF] text-xs">
-                          <div className="flex items-center gap-2">
-                            <span className="w-5 h-5 rounded-full bg-[#EBDDFF] text-[#7C3AED] flex items-center justify-center font-bold text-[10px]">C</span>
-                            <span className="font-semibold">ChatGPT Plus</span>
-                          </div>
-                          <span className="font-bold">$20.00/mo</span>
+                    {/* 4 Cards Grid Mock */}
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-1.5">
+                      {/* Card 1: Spend */}
+                      <div className="bg-white border border-[#EBDDFF] rounded-lg p-2 text-left relative overflow-hidden shadow-sm">
+                        <p className="text-[6px] text-[#6B5A84] font-bold uppercase">Monthly Spend</p>
+                        <div className="text-[11px] font-black text-[#7C3AED] mt-0.5 transition-all duration-300">
+                          {activeStep === 0 ? "$368.30" : activeStep === 1 ? (currentTime < 22 ? "$368.30" : "$383.79") : (currentTime < 38 ? "$383.79" : "$368.30")}
                         </div>
-                        <div className="flex items-center justify-between p-2 bg-[#FAF7FF] rounded-lg border border-[#EBDDFF] text-xs">
-                          <div className="flex items-center gap-2">
-                            <span className="w-5 h-5 rounded-full bg-[#EBDDFF] text-[#7C3AED] flex items-center justify-center font-bold text-[10px]">S</span>
-                            <span className="font-semibold">Spotify Premium</span>
-                          </div>
-                          <span className="font-bold">$10.99/mo</span>
-                        </div>
-
-                        {/* Netflix enters here */}
-                        <AnimatePresence>
-                          {currentTime >= 22 && (
-                            <motion.div 
-                              initial={{ opacity: 0, y: 5 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              className="flex items-center justify-between p-2 bg-gradient-to-r from-[#F5EEFF] to-[#FAF7FF] rounded-lg border border-[#7C3AED] text-xs shadow-sm shadow-[#7C3AED]/10"
-                            >
-                              <div className="flex items-center gap-2">
-                                <span className="w-5 h-5 rounded-full bg-[#7C3AED] text-white flex items-center justify-center font-bold text-[10px]">N</span>
-                                <span className="font-bold text-[#7C3AED]">Netflix Premium</span>
-                                <Badge className="bg-[#7C3AED]/20 text-[#7C3AED] border-none text-[8px] py-0 px-1 font-bold">New Scan</Badge>
-                              </div>
-                              <span className="font-bold text-[#7C3AED] animate-pulse">$15.49/mo</span>
-                            </motion.div>
+                        <p className="text-[5px] text-muted-foreground mt-0.5 leading-none">
+                          {activeStep === 1 && currentTime >= 22 ? (
+                            <span className="text-red-500 font-bold">+$15.49 added</span>
+                          ) : activeStep === 2 && currentTime >= 38 ? (
+                            <span className="text-green-600 font-bold">-$15.49 saved!</span>
+                          ) : (
+                            <span>$4,420/yr projected</span>
                           )}
+                        </p>
+                      </div>
+
+                      {/* Card 2: Count */}
+                      <div className="bg-white border border-[#EBDDFF] rounded-lg p-2 text-left relative overflow-hidden shadow-sm">
+                        <p className="text-[6px] text-[#6B5A84] font-bold uppercase">Active Subs</p>
+                        <div className="text-[11px] font-black text-[#1D1030] mt-0.5">
+                          {activeStep === 0 ? "8 active" : activeStep === 1 ? (currentTime < 22 ? "8 active" : "9 active") : (currentTime < 38 ? "9 active" : "8 active")}
+                        </div>
+                        <p className="text-[5px] text-[#6B5A84] mt-0.5">Auto-monitored</p>
+                      </div>
+
+                      {/* Card 3: Trials Ending */}
+                      <div className="bg-white border border-[#EBDDFF] rounded-lg p-2 text-left relative overflow-hidden shadow-sm">
+                        <p className="text-[6px] text-[#6B5A84] font-bold uppercase">Ending Soon</p>
+                        <div className="text-[11px] font-black text-[#1D1030] mt-0.5">0 trials</div>
+                        <p className="text-[5px] text-amber-600 font-bold mt-0.5">Within 7 days</p>
+                      </div>
+
+                      {/* Card 4: Upcoming Renewals */}
+                      <div className="bg-white border border-[#EBDDFF] rounded-lg p-2 text-left relative overflow-hidden shadow-sm">
+                        <p className="text-[6px] text-[#6B5A84] font-bold uppercase">Upcoming Renewals</p>
+                        <div className="text-[11px] font-black text-[#1D1030] mt-0.5">
+                          {activeStep === 0 ? "6 upcoming" : activeStep === 1 ? (currentTime < 22 ? "6 upcoming" : "7 upcoming") : (currentTime < 38 ? "7 upcoming" : "6 upcoming")}
+                        </div>
+                        <p className="text-[5px] text-purple-600 font-bold mt-0.5">Next 30 days</p>
+                      </div>
+                    </div>
+
+                    {/* Main renewals list showing real layout */}
+                    <div className="space-y-1.5 flex-1 mt-1 flex flex-col justify-end">
+                      <div className="flex items-center justify-between">
+                        <h5 className="text-[8px] font-black text-[#1D1030]">Upcoming Renewals</h5>
+                        <span className="text-[6px] text-[#7C3AED] font-bold">View All ➔</span>
+                      </div>
+
+                      <div className="space-y-1 overflow-y-auto max-h-[110px] pr-0.5">
+                        {/* Subscription List Items */}
+                        <div className="flex items-center justify-between p-1.5 bg-white rounded-lg border border-[#EBDDFF] text-[7px] shadow-sm">
+                          <div className="flex items-center gap-1.5">
+                            <span className="w-3.5 h-3.5 rounded-full bg-[#EBDDFF] text-[#7C3AED] flex items-center justify-center font-bold text-[7px]">P</span>
+                            <div>
+                              <p className="font-bold text-[#1D1030]">Planet Fitness</p>
+                              <p className="text-[5px] text-[#6B5A84]">May 27, 2026 · <span className="text-red-500 font-medium">in 3 days</span></p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-bold text-[#1D1030]">$15.99</p>
+                            <p className="text-[5px] text-[#6B5A84]">monthly</p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between p-1.5 bg-white rounded-lg border border-[#EBDDFF] text-[7px] shadow-sm">
+                          <div className="flex items-center gap-1.5">
+                            <span className="w-3.5 h-3.5 rounded-full bg-[#EBDDFF] text-[#7C3AED] flex items-center justify-center font-bold text-[7px]">G</span>
+                            <div>
+                              <p className="font-bold text-[#1D1030]">Google AI Pro (5 TB)</p>
+                              <p className="text-[5px] text-[#6B5A84]">May 27, 2026 · <span className="text-red-500 font-medium">in 3 days</span></p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-bold text-[#1D1030]">$1.99</p>
+                            <p className="text-[5px] text-[#6B5A84]">monthly</p>
+                          </div>
+                        </div>
+
+                        {/* Dynamic simulated Netflix scan/cancel item */}
+                        <AnimatePresence>
+                          {((activeStep === 1 && currentTime >= 22) || (activeStep === 2 && currentTime < 38)) ? (
+                            <motion.div 
+                              initial={{ opacity: 0, y: -5 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -5 }}
+                              className="flex items-center justify-between p-1.5 bg-gradient-to-r from-[#F5EEFF] to-[#FAF7FF] rounded-lg border border-[#7C3AED] text-[7px] shadow-sm shadow-[#7C3AED]/5"
+                            >
+                              <div className="flex items-center gap-1.5">
+                                <span className="w-3.5 h-3.5 rounded-full bg-[#7C3AED] text-white flex items-center justify-center font-bold text-[7px]">N</span>
+                                <div>
+                                  <div className="flex items-center gap-1">
+                                    <p className="font-bold text-[#7C3AED]">Netflix Premium</p>
+                                    <span className="bg-[#7C3AED]/20 text-[#7C3AED] text-[4px] px-0.5 rounded font-extrabold uppercase">New AI Scan</span>
+                                  </div>
+                                  <p className="text-[5px] text-[#6B5A84]">June 25, 2026 · in 32 days</p>
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <p className="font-bold text-[#7C3AED] animate-pulse">$15.49</p>
+                                <p className="text-[5px] text-[#7C3AED]">monthly</p>
+                              </div>
+                            </motion.div>
+                          ) : null}
+
+                          {activeStep === 2 && currentTime >= 38 ? (
+                            <motion.div 
+                              initial={{ scale: 0.95, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              className="flex items-center justify-between p-1.5 bg-green-50 rounded-lg border border-green-200 text-[7px] shadow-sm"
+                            >
+                              <div className="flex items-center gap-1.5 opacity-55">
+                                <span className="w-3.5 h-3.5 rounded-full bg-green-600 text-white flex items-center justify-center font-bold text-[7px]">N</span>
+                                <div>
+                                  <p className="font-bold text-green-800 line-through">Netflix Premium</p>
+                                  <p className="text-[5px] text-green-700">Canceled successfully</p>
+                                </div>
+                              </div>
+                              <div className="text-right flex items-center gap-1">
+                                <span className="bg-green-100 text-green-800 text-[5px] px-1 py-0.5 rounded font-extrabold uppercase">Canceled & Saved!</span>
+                                <p className="font-bold text-green-800">$15.49</p>
+                              </div>
+                            </motion.div>
+                          ) : null}
                         </AnimatePresence>
                       </div>
                     </div>
-                  </motion.div>
-                )}
+                  </div>
+                </div>
 
-                {activeStep === 2 && (
-                  <motion.div
-                    key="step-[#7C3AED]"
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.4 }}
-                    className="w-full max-w-xs bg-white rounded-3xl p-6 shadow-2xl border-4 border-[#1D1030] text-[#1D1030] overflow-hidden"
-                  >
-                    {/* Simulated iPhone interface */}
-                    <div className="w-20 h-4 bg-[#1D1030] rounded-full mx-auto mb-4 flex justify-center items-center">
-                      <span className="w-2 h-2 rounded-full bg-slate-700" />
-                    </div>
+                {/* Simulated Scan Modal Overlay (Active only during Step 1, starting at 4s) */}
+                <AnimatePresence>
+                  {activeStep === 0 && currentTime >= 4 && (
+                    <motion.div 
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="absolute inset-0 bg-black/45 backdrop-blur-[1px] flex items-center justify-center p-4 z-20"
+                    >
+                      <motion.div 
+                        initial={{ y: 20, scale: 0.95 }}
+                        animate={{ y: 0, scale: 1 }}
+                        exit={{ y: 20, scale: 0.95 }}
+                        className="bg-white rounded-xl p-3.5 w-full max-w-[240px] border border-[#EBDDFF] shadow-2xl relative text-left"
+                      >
+                        {/* Gemini AI Scan Overlay banner */}
+                        <div className="absolute -top-2 right-2 bg-gradient-to-r from-[#7C3AED] to-[#9333EA] text-white text-[5px] font-bold px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
+                          <Sparkles className="w-2 h-2 animate-spin" /> Gemini AI Engine
+                        </div>
 
-                    <div className="text-center mb-6">
-                      <Bell className="w-8 h-8 text-[#7C3AED] mx-auto animate-bounce mb-2" />
-                      <h4 className="font-bold text-sm">Smart Push Alarm System</h4>
-                      <p className="text-[10px] text-[#6B5A84]">Simulated alert notification</p>
-                    </div>
+                        <h3 className="font-extrabold text-[8px] mb-2 text-[#5B21B6] flex items-center gap-1 leading-none">
+                          <UploadCloud className="w-3 h-3 text-[#7C3AED]" /> AI Invoice Scanner
+                        </h3>
 
-                    <AnimatePresence>
-                      {currentTime < 38 ? (
-                        <motion.div 
-                          key="alert-incoming"
-                          initial={{ opacity: 0, y: 15 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className="bg-[#FAF7FF] border border-[#EBDDFF] rounded-2xl p-4 space-y-3 relative shadow-md"
-                        >
-                          <div className="flex items-center gap-2 border-b border-[#EBDDFF] pb-2">
-                            <div className="w-6 h-6 bg-[#7C3AED] rounded-lg text-white font-bold flex items-center justify-center text-[11px] shrink-0">X</div>
-                            <div className="text-left">
-                              <p className="font-bold text-[10px] text-[#5B21B6]">XSUBCRIPS ALARM</p>
-                              <p className="text-[8px] text-[#6B5A84]">Renewing in 48 hours</p>
+                        <div className="border border-dashed border-[#EBDDFF] rounded-lg p-2.5 bg-[#FAF7FF] text-center relative overflow-hidden flex flex-col items-center justify-center min-h-[90px]">
+                          {currentTime >= 4 && currentTime < 8 ? (
+                            <div className="flex flex-col items-center">
+                              <UploadCloud className="w-4 h-4 text-[#7C3AED] mb-1 animate-bounce" />
+                              <p className="text-[7px] font-bold text-[#1D1030]">Uploading Invoice...</p>
+                              <p className="text-[5px] text-[#6B5A84] mt-0.5">netflix_receipt_2026.pdf</p>
                             </div>
-                          </div>
-                          <p className="text-[11px] font-semibold text-left">
-                            🔔 Netflix Premium will charge <strong className="text-[#7C3AED]">$15.49</strong> on June 25th. Tap to keep or cancel.
-                          </p>
-                          <button className="w-full bg-[#7C3AED] hover:bg-[#6D28D9] text-white text-[10px] font-bold py-2 rounded-lg shadow-sm transition-all animate-pulse">
-                            ⚡ Cancel This Subscription
-                          </button>
-                        </motion.div>
-                      ) : (
-                        <motion.div 
-                          key="alert-cancelled"
-                          initial={{ scale: 0.9, opacity: 0 }}
-                          animate={{ scale: 1, opacity: 1 }}
-                          className="bg-green-50 border border-green-200 rounded-2xl p-4 text-center space-y-2"
-                        >
-                          <CheckCircle2 className="w-8 h-8 text-green-600 mx-auto" />
-                          <h5 className="font-bold text-xs text-green-800">Subscription Canceled!</h5>
-                          <p className="text-[10px] text-green-700 leading-relaxed">
-                            We successfully processed your cancellation.
-                          </p>
-                          <div className="bg-white border border-green-200 px-3 py-1.5 rounded-lg text-[10px] font-bold text-green-800 flex justify-between">
-                            <span>Money Saved:</span>
-                            <span>$15.49 / Month</span>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                          ) : currentTime >= 8 && currentTime < 12 ? (
+                            <div className="w-full relative flex flex-col items-center">
+                              {/* Miniature invoice */}
+                              <div className="w-14 h-16 bg-white border border-[#EBDDFF] shadow-sm rounded p-1 text-left text-[3px] space-y-0.5 relative">
+                                <div className="w-5 h-0.5 bg-[#7C3AED]/20 rounded" />
+                                <div className="w-10 h-0.5 bg-[#6B5A84]/20 rounded" />
+                                <hr className="border-[#EBDDFF] my-0.5" />
+                                <div className="flex justify-between font-bold text-[3px] text-[#1D1030] pt-0.5">
+                                  <span>NETFLIX PREMIUM</span>
+                                  <span>$15.49</span>
+                                </div>
+                                <div className="w-6 h-0.5 bg-[#6B5A84]/20 rounded" />
+                                {/* Scanning moving laser */}
+                                <motion.div 
+                                  animate={{ y: [0, 55, 0] }}
+                                  transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+                                  className="absolute left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-[#9333EA] to-transparent shadow-[0_0_6px_#9333EA] z-10"
+                                />
+                              </div>
+                              <p className="text-[6px] font-bold text-[#7C3AED] mt-1.5 animate-pulse">Extracting with Gemini AI...</p>
+                            </div>
+                          ) : (
+                            <motion.div 
+                              initial={{ scale: 0.95, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              className="w-full space-y-1 text-left"
+                            >
+                              <div className="bg-[#F5EEFF] p-1 rounded border border-[#EBDDFF] flex items-center justify-between text-[6px]">
+                                <span className="text-[#6B5A84]">Service Name:</span>
+                                <span className="font-bold text-[#5B21B6] flex items-center gap-0.5"><Check className="w-2 h-2 text-green-500" /> Netflix</span>
+                              </div>
+                              <div className="bg-[#F5EEFF] p-1 rounded border border-[#EBDDFF] flex items-center justify-between text-[6px]">
+                                <span className="text-[#6B5A84]">Monthly Cost:</span>
+                                <span className="font-bold text-[#5B21B6]">$15.49 / mo</span>
+                              </div>
+                              <div className="text-[5px] text-green-600 font-bold bg-green-50 p-0.5 rounded text-center border border-green-200 animate-pulse">
+                                🎉 Extracted with 99.8% Accuracy!
+                              </div>
+                            </motion.div>
+                          )}
+                        </div>
+                      </motion.div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Simulated iPhone Push Alert Overlay (Active only during Step 3) */}
+                <AnimatePresence>
+                  {activeStep === 2 && (
+                    <motion.div 
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      className="absolute inset-x-4 top-1/2 -translate-y-1/2 flex items-center justify-center z-30 pointer-events-auto"
+                    >
+                      <div className="bg-[#1D1030] text-white border-2 border-slate-700/60 rounded-xl p-3 shadow-2xl relative overflow-hidden flex flex-col gap-1.5 w-full max-w-[210px]">
+                        {/* Small notch header */}
+                        <div className="w-12 h-2 bg-black/60 rounded-full mx-auto mb-0.5 flex items-center justify-center">
+                          <span className="w-1 h-0.5 rounded-full bg-slate-800" />
+                        </div>
+
+                        <div className="text-center pb-1 border-b border-white/10 flex items-center justify-between">
+                          <span className="text-[6px] text-slate-300 font-medium">📱 Smart Alarm Notification</span>
+                          <span className="text-[5px] bg-[#7C3AED] px-1 rounded text-[4px] font-bold">LIVE PREVIEW</span>
+                        </div>
+
+                        {currentTime < 38 ? (
+                          <motion.div 
+                            key="iphone-alert-incoming"
+                            className="space-y-1.5 text-left"
+                          >
+                            <p className="text-[7px] font-bold text-[#EBDDFF] flex items-center gap-0.5">
+                              <Bell className="w-2 h-2 text-[#C084FC] animate-bounce" />
+                              <span>UPCOMING RENEWAL REMINDER</span>
+                            </p>
+                            <p className="text-[7px] text-slate-200 leading-normal">
+                              Your Netflix Premium subscription renewing in <strong className="text-[#C084FC]">48 hours</strong> will charge <strong className="text-white">$15.49</strong>.
+                            </p>
+                            
+                            {/* Click button with animated simulated mouse click indicator! */}
+                            <button 
+                              className="w-full bg-[#7C3AED] hover:bg-[#6D28D9] text-white text-[7px] font-bold py-1 rounded shadow-md transition-all flex items-center justify-center gap-1 relative overflow-hidden border border-white/15"
+                            >
+                              <span>⚡ Auto-Cancel Subscription</span>
+                              {/* Pulsing ring around the mouse pointer */}
+                              <div className="absolute right-2 w-2.5 h-2.5 rounded-full border border-white bg-white/20 animate-ping" />
+                            </button>
+                          </motion.div>
+                        ) : (
+                          <motion.div 
+                            key="iphone-alert-cancelled"
+                            initial={{ scale: 0.95, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            className="text-center space-y-1 py-1"
+                          >
+                            <CheckCircle2 className="w-4 h-4 text-green-400 mx-auto" />
+                            <h5 className="font-bold text-[8px] text-green-300 leading-none">Auto-Cancellation Approved</h5>
+                            <p className="text-[6px] text-slate-300 leading-normal">
+                              Cancel request processed. Saved <strong>$15.49/mo</strong> successfully!
+                            </p>
+                          </motion.div>
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
           </div>
 

@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { Link, useLocation } from "wouter";
-import { LayoutDashboard, List, Clock, PieChart, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, List, Clock, PieChart, Settings, LogOut, Briefcase } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "./ui/button";
 import { NotificationBell } from "./notification-bell";
@@ -10,6 +10,7 @@ const navItems = [
   { href: "/subscriptions", label: "Subscriptions", icon: List },
   { href: "/trials", label: "Trials", icon: Clock },
   { href: "/analytics", label: "Analytics", icon: PieChart },
+  { href: "/business", label: "Business Suite", icon: Briefcase },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
@@ -29,8 +30,12 @@ export function AppLayout({ children }: { children: ReactNode }) {
   const { signOut } = useAuth();
 
   return (
-    <div className="min-h-screen bg-background flex flex-col md:flex-row">
-      <aside className="w-full md:w-64 border-r border-border bg-sidebar shrink-0 md:h-screen sticky top-0 flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col md:flex-row relative overflow-hidden">
+      {/* Premium glowing purple gradient backgrounds to ensure 100% design consistency with the landing page! */}
+      <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-gradient-to-tr from-[#C084FC] to-[#818CF8] opacity-[0.08] rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-1/4 left-1/3 w-[600px] h-[600px] bg-gradient-to-br from-[#E879F9] to-[#C084FC] opacity-[0.05] rounded-full blur-[140px] pointer-events-none" />
+
+      <aside className="w-full md:w-64 border-r border-border bg-sidebar shrink-0 md:h-screen sticky top-0 flex flex-col z-10">
         <div className="p-5 pb-4 flex items-center justify-between">
           <Link href="/dashboard" className="cursor-pointer">
             <XSubscriptionLogo />
@@ -97,7 +102,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
           </Button>
         </div>
       </aside>
-      <main className="flex-1 min-w-0 flex flex-col h-screen overflow-hidden">
+      <main className="flex-1 min-w-0 flex flex-col h-screen overflow-hidden z-10">
         <div className="flex-1 overflow-y-auto p-4 md:p-8">
           <div className="max-w-5xl mx-auto w-full h-full">
             {children}
