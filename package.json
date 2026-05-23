@@ -23,6 +23,9 @@
   "pnpm": {
     "overrides": {
       "@tanstack/query-core": "5.100.9"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   }
 }
