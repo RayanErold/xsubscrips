@@ -10,6 +10,7 @@ import Dashboard from "@/pages/dashboard";
 import Subscriptions from "@/pages/subscriptions";
 import Trials from "@/pages/trials";
 import Analytics from "@/pages/analytics";
+import Business from "@/pages/business";
 import Settings from "@/pages/settings";
 
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
@@ -66,6 +67,7 @@ function Router() {
       <Route path="/subscriptions"><ProtectedRoute component={Subscriptions} /></Route>
       <Route path="/trials"><ProtectedRoute component={Trials} /></Route>
       <Route path="/analytics"><ProtectedRoute component={Analytics} /></Route>
+      <Route path="/business"><ProtectedRoute component={Business} /></Route>
       <Route path="/settings"><ProtectedRoute component={Settings} /></Route>
       <Route component={NotFound} />
     </Switch>
@@ -76,7 +78,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 
 function App() {
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <TooltipProvider>

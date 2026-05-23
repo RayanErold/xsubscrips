@@ -26,12 +26,12 @@ export default function Settings() {
   const { data: userSettings, isLoading } = useGetUserSettings();
   const { mutate: updateSettings, isPending: isUpdating } = useUpdateUserSettings({
     mutation: {
-      onSuccess: (data) => {
+      onSuccess: (data: any) => {
         console.log("Settings updated successfully:", data);
         queryClient.invalidateQueries({ queryKey: ["/api/user/settings"] });
         toast.success("Settings updated successfully");
       },
-      onError: (error) => {
+      onError: (error: any) => {
         console.error("Mutation error details:", error);
         toast.error("Failed to update settings");
       }
