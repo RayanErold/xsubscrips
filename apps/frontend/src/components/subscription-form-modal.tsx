@@ -169,7 +169,16 @@ export function SubscriptionFormModal({ open, onOpenChange, subscription }: Prop
         body: formData,
       });
 
-      if (!response.ok) throw new Error("Failed to scan receipt");
+      if (!response.ok) {
+        let errMsg = "Failed to scan receipt";
+        try {
+          const errData = await response.json();
+          if (errData) {
+            errMsg = errData.message || errData.error || errMsg;
+          }
+        } catch (_) {}
+        throw new Error(errMsg);
+      }
 
       const aiData = await response.json();
       
@@ -185,9 +194,9 @@ export function SubscriptionFormModal({ open, onOpenChange, subscription }: Prop
       
       // Reset file input
       if (fileInputRef.current) fileInputRef.current.value = "";
-    } catch (error) {
+    } catch (error: any) {
       console.error("AI Scan Error:", error);
-      alert("Failed to scan receipt. Please make sure GEMINI_API_KEY is configured.");
+      alert(`AI Scan Error: ${error.message || "Please make sure GEMINI_API_KEY is configured."}`);
     } finally {
       setIsScanning(false);
     }

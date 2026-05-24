@@ -23,16 +23,15 @@ router.post("/ai/scan-receipt", upload.single("image"), async (req: Authenticate
       return;
     }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const model = genAI.getGenerativeModel({ 
+      model: "gemini-2.5-flash",
+      generationConfig: { responseMimeType: "application/json" }
+    });
 
     const prompt = `
-      You are an expert at analyzing documents. 
-      First, determine if the provided image is a subscription receipt, invoice, or billing confirmation.
+      You are an expert at analyzing documents and extracting subscription information.
+      Analyze the provided image of a receipt, invoice, billing confirmation, or subscription page.
       
-      If it is NOT a receipt/invoice:
-      Return ONLY this JSON: { "error": "NOT_A_RECEIPT", "message": "This image does not appear to be a subscription receipt or invoice." }
-
-      If it IS a receipt/invoice:
       Extract the following information and return it as a JSON object:
       {
         "name": "Subscription name (e.g. Netflix)",
@@ -42,9 +41,12 @@ router.post("/ai/scan-receipt", upload.single("image"), async (req: Authenticate
         "startDate": "YYYY-MM-DD",
         "nextBillingDate": "YYYY-MM-DD",
         "category": "One of: Entertainment, Productivity, Music, Video, Gaming, Fitness, News, Education, Cloud, Other",
-        "notes": "Extra details"
+        "notes": "Extra details or explanation"
       }
-      Return ONLY the JSON object. Do not include markdown code blocks.
+
+      Guidelines:
+      1. If the exact price or currency is not found, try to estimate or leave them as reasonable defaults (e.g., currency "USD", price 0).
+      2. If you cannot find any subscription information, return the best name you can find or describe the document in the "name" field.
     `;
 
     const result = await model.generateContent([
@@ -60,19 +62,12 @@ router.post("/ai/scan-receipt", upload.single("image"), async (req: Authenticate
     const response = await result.response;
     const text = response.text().trim();
     
-    // Clean up response text
-    const cleanedText = text.replace(/```json|```/g, "").trim();
     let data;
     try {
-      data = JSON.parse(cleanedText);
+      data = JSON.parse(text);
     } catch (e) {
       logger.error({ text }, "Gemini returned invalid JSON");
       res.status(500).json({ error: "The AI output was malformed. Please try again." });
-      return;
-    }
-
-    if (data.error === "NOT_A_RECEIPT") {
-      res.status(400).json({ error: data.message });
       return;
     }
 

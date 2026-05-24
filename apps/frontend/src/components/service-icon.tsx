@@ -21,6 +21,7 @@ const DOMAIN_MAP: Record<string, string> = {
   "youtube premium": "youtube.com",
   "youtube music": "music.youtube.com",
   "discovery+": "discoveryplus.com",
+  "capcut": "capcut.com",
 
   // Music
   "spotify": "spotify.com",
