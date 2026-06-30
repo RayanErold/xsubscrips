@@ -1,6 +1,6 @@
 import { Link } from "wouter";
 import { motion } from "framer-motion";
-import { Plus, DollarSign, CreditCard, Clock, Calendar, ArrowRight, TrendingUp } from "lucide-react";
+import { Plus, DollarSign, CreditCard, Clock, Calendar, ArrowRight, TrendingUp, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +11,7 @@ import { ServiceIcon } from "@/components/service-icon";
 import {
   useGetDashboardSummary,
   useGetUpcomingRenewals,
+  useListSubscriptions,
 } from "@workspace/api-client-react";
 import { useState } from "react";
 import { format, parseISO, differenceInDays } from "date-fns";
@@ -60,15 +61,22 @@ function StatCard({
 
 export default function Dashboard() {
   const [addOpen, setAddOpen] = useState(false);
+  const [editSub, setEditSub] = useState<any | null>(null);
+
   const { data: summary, isLoading: summaryLoading } = useGetDashboardSummary();
   const { data: upcoming, isLoading: upcomingLoading } = useGetUpcomingRenewals();
+  const { data: subscriptions, isLoading: subsLoading } = useListSubscriptions({});
+
+  const activeSubs = (Array.isArray(subscriptions) ? subscriptions : []).filter(
+    (sub) => sub.status === "active"
+  );
 
   return (
     <AppLayout>
       <div className="space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div>
+          <div className="text-left">
             <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
             <p className="text-muted-foreground text-sm mt-1">Your subscription overview</p>
           </div>
@@ -131,7 +139,7 @@ export default function Dashboard() {
           >
             <div className="flex items-center gap-3">
               <TrendingUp className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-              <div>
+              <div className="text-left">
                 <p className="text-sm font-medium text-amber-900 dark:text-amber-200">
                   Potential savings: ${(summary.savingsOpportunity ?? 0).toFixed(2)}/month
                 </p>
@@ -148,82 +156,174 @@ export default function Dashboard() {
           </motion.div>
         )}
 
-        {/* Upcoming Renewals */}
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-foreground">Upcoming Renewals</h2>
-            <Link href="/subscriptions">
-              <Button variant="ghost" size="sm" className="gap-1 text-muted-foreground hover:text-foreground">
-                View all <ArrowRight className="w-4 h-4" />
-              </Button>
-            </Link>
+        {/* Two-Column Grid: Renewals & Active Subscriptions */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          
+          {/* Column 1: Upcoming Renewals */}
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-foreground">Upcoming Renewals</h2>
+              <Link href="/subscriptions">
+                <Button variant="ghost" size="sm" className="gap-1 text-muted-foreground hover:text-foreground">
+                  View all <ArrowRight className="w-4 h-4" />
+                </Button>
+              </Link>
+            </div>
+
+            {upcomingLoading ? (
+              <div className="space-y-3">
+                {[1, 2, 3].map((i) => (
+                  <Card key={i}>
+                    <CardContent className="p-4 flex items-center gap-4">
+                      <Skeleton className="w-10 h-10 rounded-xl shrink-0" />
+                      <div className="flex-1 space-y-2">
+                        <Skeleton className="h-4 w-32" />
+                        <Skeleton className="h-3 w-20" />
+                      </div>
+                      <Skeleton className="h-6 w-16" />
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : Array.isArray(upcoming) && upcoming.length > 0 ? (
+              <div className="space-y-2">
+                {upcoming.map((sub, i) => {
+                  const daysLeft = differenceInDays(parseISO(sub.nextBillingDate), new Date());
+                  const isUrgent = daysLeft <= 3;
+                  return (
+                    <motion.div
+                      key={sub.id}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.05 }}
+                    >
+                      <Card className="hover:shadow-sm transition-shadow">
+                        <CardContent className="p-4 flex items-center gap-4">
+                          <ServiceIcon name={sub.name} size="md" />
+                          <div className="flex-1 min-w-0 text-left">
+                            <div className="flex items-center gap-2">
+                              <p className="font-semibold text-foreground">{sub.name}</p>
+                              <Badge variant="outline" className="text-xs">{sub.category}</Badge>
+                            </div>
+                            <p className="text-sm text-muted-foreground mt-0.5">
+                              {format(parseISO(sub.nextBillingDate), "MMM d, yyyy")}
+                              {" · "}
+                              <span className={isUrgent ? "text-destructive font-medium" : ""}>
+                                {daysLeft === 0 ? "Today" : `in ${daysLeft} day${daysLeft !== 1 ? "s" : ""}`}
+                              </span>
+                            </p>
+                          </div>
+                          <div className="text-right shrink-0">
+                            <p className="font-semibold text-foreground">${(sub.price ?? 0).toFixed(2)}</p>
+                            <p className="text-xs text-muted-foreground">{sub.billingCycle}</p>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            ) : (
+              <Card>
+                <CardContent className="py-12 text-center">
+                  <Calendar className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
+                  <p className="text-muted-foreground">No renewals in the next 30 days</p>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
-          {upcomingLoading ? (
-            <div className="space-y-3">
-              {[1, 2, 3].map((i) => (
-                <Card key={i}>
-                  <CardContent className="p-4 flex items-center gap-4">
-                    <Skeleton className="w-10 h-10 rounded-xl shrink-0" />
-                    <div className="flex-1 space-y-2">
-                      <Skeleton className="h-4 w-32" />
-                      <Skeleton className="h-3 w-20" />
-                    </div>
-                    <Skeleton className="h-6 w-16" />
-                  </CardContent>
-                </Card>
-              ))}
+          {/* Column 2: Active Subscriptions List with Edit pencil */}
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-foreground">Active Subscriptions</h2>
+              <Link href="/subscriptions">
+                <Button variant="ghost" size="sm" className="gap-1 text-muted-foreground hover:text-foreground">
+                  Manage <ArrowRight className="w-4 h-4" />
+                </Button>
+              </Link>
             </div>
-          ) : Array.isArray(upcoming) && upcoming.length > 0 ? (
-            <div className="space-y-2">
-              {upcoming.map((sub, i) => {
-                const daysLeft = differenceInDays(parseISO(sub.nextBillingDate), new Date());
-                const isUrgent = daysLeft <= 3;
-                return (
+
+            {subsLoading ? (
+              <div className="space-y-3">
+                {[1, 2, 3].map((i) => (
+                  <Card key={i}>
+                    <CardContent className="p-4 flex items-center gap-4">
+                      <Skeleton className="w-10 h-10 rounded-xl shrink-0" />
+                      <div className="flex-1 space-y-2">
+                        <Skeleton className="h-4 w-32" />
+                        <Skeleton className="h-3 w-20" />
+                      </div>
+                      <Skeleton className="h-6 w-16" />
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : activeSubs.length > 0 ? (
+              <div className="space-y-2">
+                {activeSubs.map((sub, i) => (
                   <motion.div
                     key={sub.id}
-                    initial={{ opacity: 0, x: -10 }}
+                    initial={{ opacity: 0, x: 10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: i * 0.05 }}
                   >
-                    <Card className="hover:shadow-sm transition-shadow">
-                      <CardContent className="p-4 flex items-center gap-4">
-                        <ServiceIcon name={sub.name} size="md" />
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <p className="font-semibold text-foreground">{sub.name}</p>
-                            <Badge variant="outline" className="text-xs">{sub.category}</Badge>
+                    <Card className="hover:shadow-sm transition-shadow group">
+                      <CardContent className="p-4 flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-4 flex-1 min-w-0">
+                          <ServiceIcon name={sub.name} size="md" />
+                          <div className="flex-1 min-w-0 text-left">
+                            <div className="flex items-center gap-2">
+                              <p className="font-semibold text-foreground truncate">{sub.name}</p>
+                              <Badge variant="outline" className="text-xs shrink-0">{sub.category}</Badge>
+                            </div>
+                            <p className="text-xs text-muted-foreground mt-0.5">
+                              Next payment: {format(parseISO(sub.nextBillingDate), "MMM d, yyyy")}
+                            </p>
                           </div>
-                          <p className="text-sm text-muted-foreground mt-0.5">
-                            {format(parseISO(sub.nextBillingDate), "MMM d, yyyy")}
-                            {" · "}
-                            <span className={isUrgent ? "text-destructive font-medium" : ""}>
-                              {daysLeft === 0 ? "Today" : `in ${daysLeft} day${daysLeft !== 1 ? "s" : ""}`}
-                            </span>
-                          </p>
                         </div>
-                        <div className="text-right shrink-0">
-                          <p className="font-semibold text-foreground">${(sub.price ?? 0).toFixed(2)}</p>
-                          <p className="text-xs text-muted-foreground">{sub.billingCycle}</p>
+
+                        <div className="flex items-center gap-4 shrink-0">
+                          <div className="text-right">
+                            <p className="font-semibold text-foreground">${(sub.price ?? 0).toFixed(2)}</p>
+                            <p className="text-xs text-muted-foreground">{sub.billingCycle}</p>
+                          </div>
+                          
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-muted"
+                            onClick={() => setEditSub(sub)}
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                          </Button>
                         </div>
                       </CardContent>
                     </Card>
                   </motion.div>
-                );
-              })}
-            </div>
-          ) : (
-            <Card>
-              <CardContent className="py-12 text-center">
-                <Calendar className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
-                <p className="text-muted-foreground">No renewals in the next 30 days</p>
-              </CardContent>
-            </Card>
-          )}
+                ))}
+              </div>
+            ) : (
+              <Card>
+                <CardContent className="py-12 text-center">
+                  <CreditCard className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
+                  <p className="text-muted-foreground">No active subscriptions yet</p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+
         </div>
       </div>
 
       <SubscriptionFormModal open={addOpen} onOpenChange={setAddOpen} />
+      {editSub && (
+        <SubscriptionFormModal
+          open={!!editSub}
+          onOpenChange={(open) => !open && setEditSub(null)}
+          subscription={editSub}
+        />
+      )}
     </AppLayout>
   );
 }
