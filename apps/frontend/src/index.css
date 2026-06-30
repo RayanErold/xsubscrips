@@ -68,67 +68,66 @@
 
 /* LIGHT MODE */
 :root {
-  --button-outline: rgba(0,0,0, .10);
-  --badge-outline: rgba(0,0,0, .05);
+  --button-outline: rgba(0, 0, 0, .08);
+  --badge-outline: rgba(0, 0, 0, .04);
   --opaque-button-border-intensity: -8;
-  --elevate-1: rgba(124, 58, 237, .03);
-  --elevate-2: rgba(124, 58, 237, .06);
+  --elevate-1: rgba(124, 58, 237, .02);
+  --elevate-2: rgba(124, 58, 237, .04);
 
-  /* Precise, tight fintech feel, deep royal purple primary and clean white backgrounds */
-  --background: 270 30% 99%;
-  --foreground: 270 60% 12%;
-  --border: 270 15% 91%;
-  --input: 270 15% 91%;
-  --ring: 270 76% 53%;
+  --background: 240 5% 98%;
+  --foreground: 240 10% 3.9%;
+  --border: 240 5.9% 90%;
+  --input: 240 5.9% 90%;
+  --ring: 263.4 70% 50.4%;
 
   --card: 0 0% 100%;
-  --card-foreground: 270 60% 12%;
-  --card-border: 270 15% 92%;
+  --card-foreground: 240 10% 3.9%;
+  --card-border: 240 5.9% 90%;
 
-  --sidebar: 270 20% 97.5%;
-  --sidebar-foreground: 270 40% 25%;
-  --sidebar-border: 270 15% 92%;
-  --sidebar-primary: 270 76% 53%;
-  --sidebar-primary-foreground: 270 20% 99%;
-  --sidebar-accent: 270 20% 93%;
-  --sidebar-accent-foreground: 270 60% 12%;
-  --sidebar-ring: 270 76% 53%;
+  --sidebar: 240 5% 96%;
+  --sidebar-foreground: 240 10% 20%;
+  --sidebar-border: 240 5.9% 90%;
+  --sidebar-primary: 263.4 70% 50.4%;
+  --sidebar-primary-foreground: 240 5% 98%;
+  --sidebar-accent: 240 5.9% 90%;
+  --sidebar-accent-foreground: 240 10% 3.9%;
+  --sidebar-ring: 263.4 70% 50.4%;
 
   --popover: 0 0% 100%;
-  --popover-foreground: 270 60% 12%;
-  --popover-border: 270 15% 91%;
+  --popover-foreground: 240 10% 3.9%;
+  --popover-border: 240 5.9% 90%;
 
-  --primary: 270 76% 53%;
-  --primary-foreground: 270 20% 99%;
+  --primary: 263.4 70% 50.4%;
+  --primary-foreground: 240 5% 98%;
 
-  --secondary: 270 20% 95%;
-  --secondary-foreground: 270 60% 12%;
+  --secondary: 240 4.8% 95.9%;
+  --secondary-foreground: 240 10% 3.9%;
 
-  --muted: 270 12% 93%;
-  --muted-foreground: 270 20% 45%;
+  --muted: 240 4.8% 95.9%;
+  --muted-foreground: 240 3.8% 46.1%;
 
-  --accent: 270 20% 95%;
-  --accent-foreground: 270 60% 12%;
+  --accent: 180 80% 45%;
+  --accent-foreground: 240 5% 98%;
 
-  --destructive: 345 85% 55%;
+  --destructive: 345 80% 50%;
   --destructive-foreground: 0 0% 98%;
 
-  --chart-1: 270 76% 53%;
-  --chart-2: 320 80% 55%;
-  --chart-3: 190 90% 45%;
+  --chart-1: 263.4 70% 50.4%;
+  --chart-2: 180 80% 45%;
+  --chart-3: 200 95% 55%;
   --chart-4: 220 90% 55%;
   --chart-5: 270 20% 60%;
 
   --app-font-sans: 'Outfit', 'Inter', sans-serif;
   --app-font-serif: Georgia, serif;
-  --app-font-mono: Menlo, monospace;
+  --app-font-mono: 'JetBrains Mono', 'Geist Mono', Menlo, monospace;
   --radius: 0.75rem;
   
-  --shadow-sm: 0 1px 2px 0 rgb(124 58 237 / 0.03);
-  --shadow: 0 4px 12px -2px rgb(124 58 237 / 0.05), 0 2px 4px -1px rgb(124 58 237 / 0.03);
-  --shadow-md: 0 10px 20px -4px rgb(124 58 237 / 0.08), 0 4px 8px -2px rgb(124 58 237 / 0.04);
-  --shadow-lg: 0 20px 30px -6px rgb(124 58 237 / 0.12), 0 10px 15px -4px rgb(124 58 237 / 0.06);
-  --shadow-xl: 0 25px 40px -10px rgb(124 58 237 / 0.15), 0 12px 20px -8px rgb(124 58 237 / 0.08);
+  --shadow-sm: 0 1px 2px 0 rgb(124 58 237 / 0.02);
+  --shadow: 0 4px 12px -2px rgb(124 58 237 / 0.04), 0 2px 4px -1px rgb(124 58 237 / 0.02);
+  --shadow-md: 0 10px 20px -4px rgb(124 58 237 / 0.06), 0 4px 8px -2px rgb(124 58 237 / 0.03);
+  --shadow-lg: 0 20px 30px -6px rgb(124 58 237 / 0.08), 0 10px 15px -4px rgb(124 58 237 / 0.04);
+  --shadow-xl: 0 25px 40px -10px rgb(124 58 237 / 0.10), 0 12px 20px -8px rgb(124 58 237 / 0.05);
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 
@@ -141,54 +140,55 @@
   --destructive-border: hsl(from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
 }
 
+/* ECLIPSE DARK MODE */
 .dark {
-  --button-outline: rgba(255,255,255, .10);
-  --badge-outline: rgba(255,255,255, .05);
+  --button-outline: rgba(255, 255, 255, .08);
+  --badge-outline: rgba(255, 255, 255, .04);
   --opaque-button-border-intensity: 9;
-  --elevate-1: rgba(255,255,255, .04);
-  --elevate-2: rgba(255,255,255, .09);
+  --elevate-1: rgba(255, 255, 255, .02);
+  --elevate-2: rgba(255, 255, 255, .05);
 
-  --background: 270 30% 6%;
-  --foreground: 270 20% 98%;
-  --border: 270 25% 15%;
-  --input: 270 25% 15%;
-  --ring: 270 85% 65%;
+  --background: 240 10% 3.9%;
+  --foreground: 240 5% 98%;
+  --border: 240 5.9% 10%;
+  --input: 240 5.9% 10%;
+  --ring: 263.4 70% 50.4%;
 
-  --card: 270 35% 8%;
-  --card-foreground: 270 20% 98%;
-  --card-border: 270 25% 15%;
+  --card: 240 10% 5.5%;
+  --card-foreground: 240 5% 98%;
+  --card-border: 240 5.9% 10%;
 
-  --sidebar: 270 35% 8%;
-  --sidebar-foreground: 270 10% 90%;
-  --sidebar-border: 270 25% 15%;
-  --sidebar-primary: 270 85% 65%;
-  --sidebar-primary-foreground: 270 20% 99%;
-  --sidebar-accent: 270 25% 15%;
-  --sidebar-accent-foreground: 270 20% 98%;
-  --sidebar-ring: 270 85% 65%;
+  --sidebar: 240 10% 5.5%;
+  --sidebar-foreground: 240 5% 90%;
+  --sidebar-border: 240 5.9% 10%;
+  --sidebar-primary: 263.4 70% 50.4%;
+  --sidebar-primary-foreground: 240 5% 98%;
+  --sidebar-accent: 240 5.9% 10%;
+  --sidebar-accent-foreground: 240 5% 98%;
+  --sidebar-ring: 263.4 70% 50.4%;
 
-  --popover: 270 35% 8%;
-  --popover-foreground: 270 20% 98%;
-  --popover-border: 270 25% 15%;
+  --popover: 240 10% 5.5%;
+  --popover-foreground: 240 5% 98%;
+  --popover-border: 240 5.9% 10%;
 
-  --primary: 270 85% 65%;
-  --primary-foreground: 270 20% 99%;
+  --primary: 263.4 70% 50.4%;
+  --primary-foreground: 240 5% 98%;
 
-  --secondary: 270 25% 15%;
-  --secondary-foreground: 270 20% 98%;
+  --secondary: 240 4.8% 9.6%;
+  --secondary-foreground: 240 5% 98%;
 
-  --muted: 270 25% 15%;
-  --muted-foreground: 270 10% 68%;
+  --muted: 240 4.8% 9.6%;
+  --muted-foreground: 240 5.2% 63.9%;
 
-  --accent: 270 25% 15%;
-  --accent-foreground: 270 20% 98%;
+  --accent: 180 100% 50%;
+  --accent-foreground: 240 5% 98%;
 
   --destructive: 345 80% 50%;
   --destructive-foreground: 0 0% 98%;
 
-  --chart-1: 270 85% 65%;
-  --chart-2: 320 80% 65%;
-  --chart-3: 190 90% 55%;
+  --chart-1: 263.4 70% 50.4%;
+  --chart-2: 180 100% 50%;
+  --chart-3: 200 95% 55%;
   --chart-4: 220 90% 65%;
   --chart-5: 270 20% 60%;
 }
@@ -208,5 +208,52 @@
     content: attr(data-placeholder);
     color: hsl(var(--muted-foreground));
     pointer-events: none;
+  }
+
+  /* Infinite Marquee Animations */
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .animate-marquee {
+    display: flex;
+    width: max-content;
+    animation: marquee 35s linear infinite;
+  }
+
+  .animate-marquee-reverse {
+    display: flex;
+    width: max-content;
+    animation: marquee 35s linear infinite reverse;
+  }
+
+  .mask-marquee {
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  }
+
+  /* Interactive Subscription Hub Float Animations */
+  @keyframes hub-float-1 {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-4px); }
+  }
+  @keyframes hub-float-2 {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(4px); }
+  }
+  @keyframes hub-float-3 {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-3px); }
+  }
+
+  .animate-hub-float-1 {
+    animation: hub-float-1 5s ease-in-out infinite;
+  }
+  .animate-hub-float-2 {
+    animation: hub-float-2 6s ease-in-out infinite;
+  }
+  .animate-hub-float-3 {
+    animation: hub-float-3 7s ease-in-out infinite;
   }
 }

@@ -78,7 +78,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 
 function App() {
   return (
-    <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+    <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <TooltipProvider>

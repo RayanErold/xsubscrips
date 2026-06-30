@@ -195,7 +195,7 @@ const DOMAIN_MAP: Record<string, string> = {
   "onedrive": "onedrive.live.com",
   "box": "box.com",
   "backblaze": "backblaze.com",
-  
+
   // Transportation / Rental
   "whizz": "getwhizz.com",
   "whizz ebike": "getwhizz.com",
