@@ -14,13 +14,38 @@ const navItems = [
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 
+export function BrandLogo({ size = 36 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 100 100" fill="none" className="transition-all duration-300 drop-shadow-[0_2px_8px_rgba(124,58,237,0.25)]">
+      <defs>
+        <linearGradient id="logo-cyan" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#22d3ee" />
+          <stop offset="100%" stopColor="#06b6d4" />
+        </linearGradient>
+        <linearGradient id="logo-violet" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#c084fc" />
+          <stop offset="100%" stopColor="#818cf8" />
+        </linearGradient>
+      </defs>
+      <path 
+        d="M26 22 L46 50 L26 78 L38 78 L58 50 L38 22 Z" 
+        fill="url(#logo-violet)" 
+        className="opacity-95" 
+      />
+      <path 
+        d="M74 22 L54 50 L74 78 L62 78 L42 50 L62 22 Z" 
+        fill="url(#logo-cyan)" 
+        className="opacity-90" 
+      />
+    </svg>
+  );
+}
+
 function XSubscriptionLogo() {
   return (
     <div className="flex items-center gap-2.5 group">
-      <div className="w-9 h-9 bg-foreground rounded-lg flex items-center justify-center transition-transform group-hover:scale-105 shadow-sm">
-        <span className="text-background text-xl font-bold italic tracking-tighter">X</span>
-      </div>
-      <span className="font-bold text-lg tracking-tight text-foreground">X Subscrips</span>
+      <BrandLogo size={30} />
+      <span className="font-bold text-lg tracking-tight text-foreground">Xsubscrips</span>
     </div>
   );
 }

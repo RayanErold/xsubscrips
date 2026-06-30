@@ -3,6 +3,7 @@ import cors from "cors";
 import pinoHttp from "pino-http";
 import router from "./routes";
 import { logger } from "./lib/logger";
+import { observaMiddleware, observaErrorHandler } from "./middleware/observa";
 
 import path from "path";
 import { fileURLToPath } from "url";
@@ -40,7 +41,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // API Routes
-app.use("/api", router);
+app.use("/api", observaMiddleware, router);
+
+// API Error Handler
+app.use("/api", observaErrorHandler);
 
 // Serve Frontend Static Files
 const frontendDistPath = path.resolve(__dirname, "../../frontend/dist/public");
