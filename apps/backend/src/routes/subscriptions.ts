@@ -194,6 +194,29 @@ router.delete("/subscriptions/:id", async (req: AuthenticatedRequest, res: Respo
   res.status(204).send();
 });
 
+// POST /subscriptions/:id/cancel
+router.post("/subscriptions/:id/cancel", async (req: AuthenticatedRequest, res: Response) => {
+  const userId = req.user!.id;
+  const id = parseInt(req.params.id as string);
+  if (isNaN(id)) {
+    res.status(400).json({ error: "Invalid id" });
+    return;
+  }
+
+  const [row] = await db
+    .update(subscriptionsTable)
+    .set({ status: "cancelled" })
+    .where(and(eq(subscriptionsTable.id, id), eq(subscriptionsTable.userId, userId)))
+    .returning();
+
+  if (!row) {
+    res.status(404).json({ error: "Not found" });
+    return;
+  }
+
+  res.json(toApiSubscription(row));
+});
+
 // GET /dashboard/summary
 router.get("/dashboard/summary", async (req: AuthenticatedRequest, res: Response) => {
   const userId = req.user!.id;
@@ -339,7 +362,7 @@ router.get("/notifications", async (req: AuthenticatedRequest, res: Response) =>
 
   const alerts: {
     id: string;
-    type: "trial" | "renewal";
+    type: "trial" | "renewal" | "overlap" | "spike";
     title: string;
     message: string;
     daysLeft: number;
@@ -347,6 +370,8 @@ router.get("/notifications", async (req: AuthenticatedRequest, res: Response) =>
     subscriptionName: string;
     severity: "info" | "warning" | "urgent";
   }[] = [];
+
+  const activeSubs = rows.filter(r => r.status === "active");
 
   for (const row of rows) {
     if (row.status === "cancelled") continue;
@@ -400,6 +425,56 @@ router.get("/notifications", async (req: AuthenticatedRequest, res: Response) =>
           subscriptionId: row.id,
           subscriptionName: row.name,
           severity,
+        });
+      }
+    }
+  }
+
+  // ── 1. Category Overlap Alert ──
+  const categoryGroups: Record<string, typeof rows> = {};
+  for (const sub of activeSubs) {
+    const cat = sub.category || "Uncategorized";
+    categoryGroups[cat] = categoryGroups[cat] || [];
+    categoryGroups[cat].push(sub);
+  }
+
+  for (const [cat, subs] of Object.entries(categoryGroups)) {
+    if (subs.length >= 3) {
+      const totalCost = subs.reduce((sum, s) => sum + toMonthlyAmount(parseFloat(s.price as unknown as string), s.billingCycle), 0);
+      alerts.push({
+        id: `overlap-${cat}`,
+        type: "overlap",
+        title: "Duplicate Category Warning",
+        message: `You have ${subs.length} active subscriptions in "${cat}" costing $${totalCost.toFixed(2)}/mo. Consider consolidating tools.`,
+        daysLeft: 0,
+        subscriptionId: subs[0].id,
+        subscriptionName: subs[0].name,
+        severity: "warning",
+      });
+    }
+  }
+
+  // ── 2. Price Spike Warning ──
+  for (const sub of activeSubs) {
+    const history = await db
+      .select()
+      .from(billingHistoryTable)
+      .where(eq(billingHistoryTable.subscriptionId, sub.id))
+      .orderBy(desc(billingHistoryTable.billingDate));
+    
+    if (history.length >= 2) {
+      const lastAmt = parseFloat(history[0].amount as unknown as string);
+      const prevAmt = parseFloat(history[1].amount as unknown as string);
+      if (lastAmt > prevAmt) {
+        alerts.push({
+          id: `spike-${sub.id}-${history[0].id}`,
+          type: "spike",
+          title: "Cost Spike Warning",
+          message: `${sub.name} subscription rate spiked from $${prevAmt.toFixed(2)} to $${lastAmt.toFixed(2)} (+$${(lastAmt - prevAmt).toFixed(2)}).`,
+          daysLeft: 0,
+          subscriptionId: sub.id,
+          subscriptionName: sub.name,
+          severity: "urgent",
         });
       }
     }
