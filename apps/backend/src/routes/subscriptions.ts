@@ -4,8 +4,58 @@ import { eq, and, lte, gte, desc, sql } from "drizzle-orm";
 import { z } from "zod";
 import { Router } from "express";
 import { AuthenticatedRequest } from "../middleware/auth";
+import { addYears, addWeeks, addMonths } from "date-fns";
 
 const router = Router();
+
+async function autoExtendPastSubscriptions(userId: string) {
+  const todayStr = new Date().toISOString().split("T")[0];
+  const today = new Date(todayStr);
+
+  const activeRows = await db
+    .select()
+    .from(subscriptionsTable)
+    .where(and(eq(subscriptionsTable.userId, userId), eq(subscriptionsTable.status, "active")));
+
+  for (const sub of activeRows) {
+    const nextBilling = new Date(sub.nextBillingDate);
+    if (nextBilling < today) {
+      let tempDate = nextBilling;
+      const billingHistoryInserts = [];
+
+      while (tempDate < today) {
+        if (sub.billingCycle === "yearly") {
+          tempDate = addYears(tempDate, 1);
+        } else if (sub.billingCycle === "weekly") {
+          tempDate = addWeeks(tempDate, 1);
+        } else {
+          tempDate = addMonths(tempDate, 1);
+        }
+
+        const dateStr = tempDate.toISOString().split("T")[0];
+        billingHistoryInserts.push({
+          subscriptionId: sub.id,
+          userId: sub.userId,
+          billingDate: dateStr,
+          amount: sub.price as unknown as string,
+          currency: sub.currency,
+          status: "paid",
+        });
+      }
+
+      const finalNextBillingStr = tempDate.toISOString().split("T")[0];
+
+      await db
+        .update(subscriptionsTable)
+        .set({ nextBillingDate: finalNextBillingStr })
+        .where(eq(subscriptionsTable.id, sub.id));
+
+      if (billingHistoryInserts.length > 0) {
+        await db.insert(billingHistoryTable).values(billingHistoryInserts);
+      }
+    }
+  }
+}
 
 function toApiSubscription(row: typeof subscriptionsTable.$inferSelect) {
   return {
@@ -55,6 +105,7 @@ const updateBodySchema = createBodySchema.partial();
 // GET /subscriptions
 router.get("/subscriptions", async (req: AuthenticatedRequest, res: Response) => {
   const userId = req.user!.id;
+  await autoExtendPastSubscriptions(userId);
   const { status, category } = req.query as {
     status?: string;
     category?: string;
@@ -220,6 +271,7 @@ router.post("/subscriptions/:id/cancel", async (req: AuthenticatedRequest, res: 
 // GET /dashboard/summary
 router.get("/dashboard/summary", async (req: AuthenticatedRequest, res: Response) => {
   const userId = req.user!.id;
+  await autoExtendPastSubscriptions(userId);
   const today = new Date().toISOString().split("T")[0];
   const in30Days = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
     .toISOString()
@@ -275,6 +327,7 @@ router.get("/dashboard/summary", async (req: AuthenticatedRequest, res: Response
 // GET /dashboard/upcoming
 router.get("/dashboard/upcoming", async (req: AuthenticatedRequest, res: Response) => {
   const userId = req.user!.id;
+  await autoExtendPastSubscriptions(userId);
   const today = new Date().toISOString().split("T")[0];
   const in30Days = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
     .toISOString()
@@ -357,6 +410,7 @@ router.get("/analytics/spend-over-time", async (req: AuthenticatedRequest, res: 
 // GET /notifications
 router.get("/notifications", async (req: AuthenticatedRequest, res: Response) => {
   const userId = req.user!.id;
+  await autoExtendPastSubscriptions(userId);
   const today = new Date().toISOString().split("T")[0];
   const rows = await db.select().from(subscriptionsTable).where(eq(subscriptionsTable.userId, userId));
 
