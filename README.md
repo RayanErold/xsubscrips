@@ -90,6 +90,31 @@ All API calls are authenticated. You must pass `Authorization: Bearer <JWT_TOKEN
 
 ---
 
+## 📩 Automated Email Alert & Notification Proofs
+
+X Subscription integrates with **Resend** to dispatch real-time transactional emails and automated trial/renewal alerts. Below is empirical proof of live email notifications dispatched by the platform:
+
+### 1. Upcoming Renewal Alert (Pre-Charge Warning)
+*Dispatched before a subscription recharges, giving users time to cancel unwanted services before being charged.*
+
+![Upcoming Renewal Alert](./docs/images/upcoming-renewal-acorns.png)
+
+---
+
+### 2. Renewal Processed Confirmation (Acorns)
+*Sent immediately after a recurring subscription renewal occurs.*
+
+![Renewal Processed Confirmation - Acorns](./docs/images/renewal-processed-acorns.png)
+
+---
+
+### 3. Renewal Processed Confirmation (Google AI Pro 5TB)
+*Sent when cloud or AI software subscriptions process their billing cycle.*
+
+![Renewal Processed Confirmation - Google AI Pro](./docs/images/renewal-processed-google-ai.png)
+
+---
+
 ## 🚀 Local Development Setup
 
 ### 1. Install Dependencies

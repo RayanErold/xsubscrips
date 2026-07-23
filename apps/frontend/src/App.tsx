@@ -12,6 +12,7 @@ import Trials from "@/pages/trials";
 import Analytics from "@/pages/analytics";
 import Business from "@/pages/business";
 import Settings from "@/pages/settings";
+import Pricing from "@/pages/pricing";
 
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 import { persistQueryClient } from "@tanstack/react-query-persist-client";
@@ -62,6 +63,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={Landing} />
+      <Route path="/pricing" component={Pricing} />
       <Route path="/login" component={Login} />
       <Route path="/dashboard"><ProtectedRoute component={Dashboard} /></Route>
       <Route path="/subscriptions"><ProtectedRoute component={Subscriptions} /></Route>
