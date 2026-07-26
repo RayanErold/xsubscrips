@@ -1,5 +1,22 @@
-<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="180" height="180" rx="40" fill="#09090b"/>
-  <text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" fill="white" font-family="system-ui, sans-serif" font-weight="900" font-style="italic" font-size="100">X</text>
-  <text x="50%" y="80%" dominant-baseline="middle" text-anchor="middle" fill="white" font-family="system-ui, sans-serif" font-weight="700" font-size="24">SUBSCRIPS</text>
+<svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="logo-cyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#06b6d4" />
+      <stop offset="100%" stopColor="#0284c7" />
+    </linearGradient>
+    <linearGradient id="logo-violet" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#818cf8" />
+      <stop offset="100%" stopColor="#4f46e5" />
+    </linearGradient>
+  </defs>
+  <path 
+    d="M26 22 L46 50 L26 78 L38 78 L58 50 L38 22 Z" 
+    fill="url(#logo-violet)" 
+    opacity="0.95" 
+  />
+  <path 
+    d="M74 22 L54 50 L74 78 L62 78 L42 50 L62 22 Z" 
+    fill="url(#logo-cyan)" 
+    opacity="0.90" 
+  />
 </svg>
