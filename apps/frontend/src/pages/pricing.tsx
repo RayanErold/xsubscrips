@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 import { Check, X, ArrowRight, Clock } from "lucide-react";
@@ -102,6 +102,10 @@ function SoonChip() {
 
 export default function Pricing() {
   const [isYearly, setIsYearly] = useState(true);
+
+  useEffect(() => {
+    document.title = "Xsubscrips — Simple, transparent pricing";
+  }, []);
 
   const renderCell = (val: Cell, soon?: boolean, dark?: boolean) => {
     if (typeof val === "string") {

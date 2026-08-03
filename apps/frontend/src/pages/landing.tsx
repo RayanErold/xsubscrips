@@ -92,6 +92,10 @@ export default function Landing() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    document.title = "Xsubscrips — Stop the silent subscription leak";
+  }, []);
+
   const handleHeroSignUp = (e: React.FormEvent) => {
     e.preventDefault();
     window.location.href = heroEmail
