@@ -33,55 +33,27 @@ function getSnoozedMap(): Record<string, number> {
   }
 }
 
+const ATTENTION = {
+  bg: "bg-foreground/5",
+  border: "border-border",
+  badge: "bg-foreground/10 text-foreground",
+  dot: "bg-foreground",
+  iconColor: "text-foreground",
+};
+const PASSIVE = {
+  bg: "bg-muted/50",
+  border: "border-border",
+  badge: "bg-muted text-muted-foreground",
+  dot: "bg-muted-foreground",
+  iconColor: "text-muted-foreground",
+};
 const SEVERITY_STYLES = {
-  urgent: {
-    bg: "bg-red-50 dark:bg-red-950/40",
-    border: "border-red-200 dark:border-red-800/50",
-    badge: "bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-400",
-    dot: "bg-red-500",
-    icon: AlertTriangle,
-    iconColor: "text-red-500",
-  },
-  warning: {
-    bg: "bg-orange-50 dark:bg-orange-950/40",
-    border: "border-orange-200 dark:border-orange-800/50",
-    badge: "bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-400",
-    dot: "bg-orange-500",
-    icon: Clock,
-    iconColor: "text-orange-500",
-  },
-  info: {
-    bg: "bg-blue-50 dark:bg-blue-950/40",
-    border: "border-blue-200 dark:border-blue-800/50",
-    badge: "bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-400",
-    dot: "bg-primary",
-    icon: CreditCard,
-    iconColor: "text-blue-500",
-  },
-  overlap: {
-    bg: "bg-purple-50 dark:bg-purple-950/40",
-    border: "border-purple-200 dark:border-purple-800/50",
-    badge: "bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-400",
-    dot: "bg-purple-500",
-    icon: ShieldAlert,
-    iconColor: "text-purple-500",
-  },
-  spike: {
-    bg: "bg-amber-50 dark:bg-amber-950/40",
-    border: "border-amber-200 dark:border-amber-800/50",
-    badge: "bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-400",
-    dot: "bg-amber-500",
-    icon: AlertTriangle,
-    iconColor: "text-amber-500",
-  },
-  leak: {
-    bg: "bg-rose-50 dark:bg-rose-950/40",
-    border: "border-rose-200 dark:border-rose-800/50",
-    badge: "bg-rose-100 text-rose-700 dark:bg-rose-900/50 dark:text-rose-400",
-    dot: "bg-rose-500",
-    icon: Sparkles,
-    iconColor: "text-rose-500",
-  },
+  urgent: { ...ATTENTION, icon: AlertTriangle },
+  warning: { ...ATTENTION, icon: Clock },
+  info: { ...PASSIVE, icon: CreditCard },
+  overlap: { ...PASSIVE, icon: ShieldAlert },
+  spike: { ...ATTENTION, icon: AlertTriangle },
+  leak: { ...ATTENTION, icon: Sparkles },
 };
 
 export function NotificationBell() {

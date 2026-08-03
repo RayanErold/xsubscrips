@@ -34,16 +34,16 @@ function getTrialStatus(daysLeft: number): "active" | "ending-soon" | "expired" 
 
 function urgencyBadgeStyle(daysLeft: number) {
   if (daysLeft < 0) return "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400";
-  if (daysLeft <= 3) return "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400";
-  if (daysLeft <= 7) return "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400";
-  return "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400";
+  if (daysLeft <= 3) return "bg-foreground/10 text-foreground";
+  if (daysLeft <= 7) return "bg-muted text-foreground";
+  return "bg-muted text-muted-foreground";
 }
 
 function urgencyBarColor(daysLeft: number) {
   if (daysLeft < 0) return "bg-gray-300 dark:bg-gray-600";
-  if (daysLeft <= 3) return "bg-red-500";
-  if (daysLeft <= 7) return "bg-orange-400";
-  return "bg-green-500";
+  if (daysLeft <= 3) return "bg-foreground";
+  if (daysLeft <= 7) return "bg-muted-foreground";
+  return "bg-muted-foreground/50";
 }
 
 function toMonthly(price: number, cycle: string) {
@@ -82,10 +82,10 @@ export default function Trials() {
   const moneyAtRisk = endingSoon.reduce((acc, t) => acc + toMonthly(t.price, t.billingCycle), 0);
 
   const summaryCards = [
-    { label: "Active Trials", value: active.length, icon: CheckCircle, color: "text-green-500" },
-    { label: "Ending Soon", value: endingSoon.length, icon: AlertTriangle, color: "text-orange-500" },
+    { label: "Active Trials", value: active.length, icon: CheckCircle, color: "text-muted-foreground" },
+    { label: "Ending Soon", value: endingSoon.length, icon: AlertTriangle, color: "text-foreground" },
     { label: "Expired", value: expired.length, icon: XCircle, color: "text-muted-foreground" },
-    { label: "Money at Risk", value: `$${moneyAtRisk.toFixed(2)}/mo`, icon: DollarSign, color: "text-red-500" },
+    { label: "Money at Risk", value: `$${moneyAtRisk.toFixed(2)}/mo`, icon: DollarSign, color: "text-foreground" },
   ];
 
   const allTrials = [...endingSoon, ...active, ...expired];
@@ -172,7 +172,7 @@ export default function Trials() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}
                 >
-                  <Card className={trial.daysLeft >= 0 && trial.daysLeft <= 3 ? "border-red-200 dark:border-red-900/50" : ""}>
+                  <Card className={trial.daysLeft >= 0 && trial.daysLeft <= 3 ? "border-foreground/30" : ""}>
                     <CardContent className="p-5">
                       <div className="flex items-start gap-4">
                         {/* Brand icon */}
@@ -194,7 +194,7 @@ export default function Trials() {
                               </p>
                             </div>
                             <div className="text-right shrink-0">
-                              <p className={`text-xl font-bold ${trial.daysLeft >= 0 && trial.daysLeft <= 3 ? "text-red-500" : trial.daysLeft <= 7 && trial.daysLeft >= 0 ? "text-orange-500" : "text-foreground"}`}>
+                              <p className="text-xl font-bold text-foreground">
                                 {trial.daysLeft < 0
                                   ? "Expired"
                                   : `${trial.daysLeft} day${trial.daysLeft !== 1 ? "s" : ""} left`}
@@ -223,7 +223,7 @@ export default function Trials() {
                               <Button
                                 variant="outline"
                                 size="sm"
-                                className={`text-xs h-7 ${trial.daysLeft >= 0 && trial.daysLeft <= 7 ? "border-red-300 text-red-600 hover:bg-red-50 dark:border-red-800 dark:text-red-400" : ""}`}
+                                className={`text-xs h-7 ${trial.daysLeft >= 0 && trial.daysLeft <= 7 ? "border-foreground/30 text-foreground hover:bg-muted" : ""}`}
                               >
                                 {trial.daysLeft < 0 ? "Manage" : "Cancel Trial"}
                               </Button>

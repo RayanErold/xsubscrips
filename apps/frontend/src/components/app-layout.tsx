@@ -16,26 +16,14 @@ const navItems = [
 
 export function BrandLogo({ size = 36 }: { size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 100 100" fill="none" className="transition-all duration-300 drop-shadow-[0_2px_8px_rgba(124,58,237,0.25)]">
-      <defs>
-        <linearGradient id="logo-cyan" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#22d3ee" />
-          <stop offset="100%" stopColor="#06b6d4" />
-        </linearGradient>
-        <linearGradient id="logo-violet" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#c084fc" />
-          <stop offset="100%" stopColor="#818cf8" />
-        </linearGradient>
-      </defs>
-      <path 
-        d="M26 22 L46 50 L26 78 L38 78 L58 50 L38 22 Z" 
-        fill="url(#logo-violet)" 
-        className="opacity-95" 
+    <svg width={size} height={size} viewBox="0 0 100 100" fill="none" className="transition-all duration-300">
+      <path
+        d="M26 22 L46 50 L26 78 L38 78 L58 50 L38 22 Z"
+        className="fill-foreground opacity-95"
       />
-      <path 
-        d="M74 22 L54 50 L74 78 L62 78 L42 50 L62 22 Z" 
-        fill="url(#logo-cyan)" 
-        className="opacity-90" 
+      <path
+        d="M74 22 L54 50 L74 78 L62 78 L42 50 L62 22 Z"
+        className="fill-muted-foreground opacity-90"
       />
     </svg>
   );
@@ -56,10 +44,6 @@ export function AppLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-screen bg-background flex flex-col md:flex-row relative overflow-hidden">
-      {/* Premium glowing purple gradient backgrounds to ensure 100% design consistency with the landing page! */}
-      <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-gradient-to-tr from-[#C084FC] to-[#818CF8] opacity-[0.08] rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-1/4 left-1/3 w-[600px] h-[600px] bg-gradient-to-br from-[#E879F9] to-[#C084FC] opacity-[0.05] rounded-full blur-[140px] pointer-events-none" />
-
       <aside className="w-full md:w-64 border-r border-border bg-sidebar shrink-0 md:h-screen sticky top-0 flex flex-col z-10">
         <div className="p-5 pb-4 flex items-center justify-between">
           <Link href="/dashboard" className="cursor-pointer">

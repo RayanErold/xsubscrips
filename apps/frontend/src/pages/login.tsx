@@ -108,17 +108,16 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans flex flex-col justify-between p-4 sm:p-6 relative overflow-hidden selection:bg-indigo-100 selection:text-indigo-900">
-      {/* Background ambient light mesh */}
-      <div className="absolute top-0 left-1/3 w-[600px] h-[600px] bg-gradient-to-tr from-indigo-100/60 to-purple-100/40 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-gradient-to-br from-cyan-100/40 to-indigo-100/50 rounded-full blur-[140px] pointer-events-none" />
+    <div className="min-h-screen bg-white text-slate-900 font-sans flex flex-col justify-between p-4 sm:p-6 relative overflow-hidden selection:bg-slate-900 selection:text-white">
+      {/* Subtle neutral ambient */}
+      <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-[radial-gradient(circle,_rgba(15,23,42,0.05),_transparent_70%)] pointer-events-none" />
 
       {/* Top Header Nav */}
       <header className="max-w-md mx-auto w-full pt-4 pb-2 flex items-center justify-between z-10">
         <Link href="/">
           <div className="flex items-center gap-2 cursor-pointer group">
             <BrandLogo size={28} />
-            <span className="text-lg font-extrabold tracking-tight text-slate-900 group-hover:text-indigo-600 transition-colors">
+            <span className="text-lg font-extrabold tracking-tight text-slate-900 group-hover:text-slate-600 transition-colors">
               Xsubscrips
             </span>
           </div>
@@ -133,7 +132,7 @@ export default function Login() {
       {/* Main White Auth Card */}
       <main className="w-full max-w-md mx-auto my-auto bg-white border border-slate-200/90 rounded-3xl p-8 shadow-xl relative z-10">
         <div className="text-center mb-8">
-          <div className="w-14 h-14 bg-indigo-600 rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-md shadow-indigo-600/20 text-white">
+          <div className="w-14 h-14 bg-slate-100 border border-slate-200 rounded-2xl mx-auto flex items-center justify-center mb-4">
             <BrandLogo size={32} />
           </div>
           <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 mb-1">
@@ -155,7 +154,7 @@ export default function Login() {
                   placeholder="Alex"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
-                  className="bg-slate-50 border-slate-300 text-slate-900 h-11 rounded-xl text-xs focus-visible:ring-indigo-600 placeholder:text-slate-400"
+                  className="bg-slate-50 border-slate-300 text-slate-900 h-11 rounded-xl text-xs focus-visible:ring-slate-900 placeholder:text-slate-400"
                   required
                 />
               </div>
@@ -167,7 +166,7 @@ export default function Login() {
                   placeholder="Morgan"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
-                  className="bg-slate-50 border-slate-300 text-slate-900 h-11 rounded-xl text-xs focus-visible:ring-indigo-600 placeholder:text-slate-400"
+                  className="bg-slate-50 border-slate-300 text-slate-900 h-11 rounded-xl text-xs focus-visible:ring-slate-900 placeholder:text-slate-400"
                   required
                 />
               </div>
@@ -184,7 +183,7 @@ export default function Login() {
                 placeholder="name@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="pl-10 bg-slate-50 border-slate-300 text-slate-900 h-11 rounded-xl text-xs focus-visible:ring-indigo-600 placeholder:text-slate-400"
+                className="pl-10 bg-slate-50 border-slate-300 text-slate-900 h-11 rounded-xl text-xs focus-visible:ring-slate-900 placeholder:text-slate-400"
                 required
               />
             </div>
@@ -194,7 +193,7 @@ export default function Login() {
             <div className="flex items-center justify-between">
               <Label htmlFor="password" className="text-xs font-bold text-slate-700">Password</Label>
               {!isSignUp && (
-                <button type="button" className="text-xs text-indigo-600 hover:text-indigo-700 font-semibold">
+                <button type="button" className="text-xs text-slate-700 hover:text-slate-900 font-semibold">
                   Forgot?
                 </button>
               )}
@@ -206,7 +205,7 @@ export default function Login() {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="bg-slate-50 border-slate-300 text-slate-900 h-11 rounded-xl text-xs focus-visible:ring-indigo-600 placeholder:text-slate-400 pr-10"
+                className="bg-slate-50 border-slate-300 text-slate-900 h-11 rounded-xl text-xs focus-visible:ring-slate-900 placeholder:text-slate-400 pr-10"
                 required
               />
               <button
@@ -221,7 +220,7 @@ export default function Login() {
 
           <Button
             type="submit"
-            className="w-full h-11 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-600/20 transition-all active:scale-[0.99] mt-2"
+            className="w-full h-11 rounded-xl bg-slate-900 hover:bg-black text-white font-bold text-xs shadow-md shadow-slate-900/20 transition-all active:scale-[0.99] mt-2"
             disabled={loading}
           >
             {loading 
@@ -260,7 +259,7 @@ export default function Login() {
           <button 
             type="button"
             onClick={() => setIsSignUp(!isSignUp)}
-            className="text-indigo-600 font-bold hover:underline"
+            className="text-slate-900 font-bold hover:underline"
           >
             {isSignUp ? "Sign In" : "Create account"}
           </button>
