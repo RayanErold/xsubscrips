@@ -14,6 +14,7 @@ import {
   Accordion, AccordionItem, AccordionTrigger, AccordionContent,
 } from "@/components/ui/accordion";
 import { supabase } from "@/lib/supabaseClient";
+import { Navbar } from "@/components/navbar";
 
 export function BrandLogo({ size = 36 }: { size?: number }) {
   return (
@@ -141,31 +142,7 @@ export default function Landing() {
   return (
     <div className="min-h-screen bg-white text-slate-900 overflow-x-hidden font-sans relative selection:bg-slate-900 selection:text-white antialiased">
       {/* Nav */}
-      <nav className="sticky top-0 z-50 border-b border-slate-200/70 bg-white/80 backdrop-blur-xl">
-        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2.5 cursor-pointer">
-            <BrandLogo size={30} />
-            <span className="text-lg font-extrabold tracking-tight text-slate-900">Xsubscrips</span>
-          </div>
-          <div className="flex items-center gap-1 sm:gap-2">
-            <a href="#features" className="hidden sm:inline-block px-3 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">Features</a>
-            <a href="#demo" className="hidden sm:inline-block px-3 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">Demo</a>
-            <a href="#faq" className="hidden sm:inline-block px-3 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">FAQ</a>
-            <Link href="/pricing">
-              <span className="hidden sm:inline-block px-3 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors cursor-pointer">Pricing</span>
-            </Link>
-            <div className="w-px h-5 bg-slate-200 mx-1.5 hidden sm:block" />
-            <Link href="/login">
-              <Button variant="ghost" size="sm" className="text-slate-600 hover:text-slate-900 font-medium">Sign in</Button>
-            </Link>
-            <Link href="/login?mode=signup">
-              <Button size="sm" className="bg-slate-900 hover:bg-black text-white shadow-sm font-semibold px-4 rounded-full gap-1.5">
-                Get started <ArrowRight className="w-3.5 h-3.5" />
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* HERO — split with phone */}
       <section className="relative overflow-hidden">
